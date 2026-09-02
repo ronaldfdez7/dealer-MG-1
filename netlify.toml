@@ -1,6 +1,5 @@
 [build]
   publish = "dist"
-  command = ""
 
 [[headers]]
   for = "/hero.mp4"
