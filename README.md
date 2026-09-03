@@ -64,7 +64,9 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
 - [ ] **Pasarela de pago** — hace falta cuenta de comercio (First Atlantic Commerce
       o WiPay) y un servidor que autorice cada cobro. La página **no pide datos de
       tarjeta en ningún punto**, y así debe seguir hasta que exista ese servidor.
-- [ ] **Formulario de solicitud** — hoy no envía nada; falta conectarlo a correo o WhatsApp
+- [x] **Formulario de solicitud** — conectado a Netlify Forms; llega al correo configurado
+      en el panel de Netlify (Site settings → Forms → Form notifications) y también queda
+      guardado ahí bajo la pestaña "Forms"
 - [ ] **Tasa de cambio** — fija en 158 JMD/USD, etiquetada como indicativa. En producción
       debería venir de un servicio de tasas. Se cambia en la constante `USD_TO_JMD`
       dentro de `dist/index.html`.
