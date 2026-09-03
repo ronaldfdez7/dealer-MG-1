@@ -371,7 +371,9 @@
   .trust-item{ text-align:center; padding:30px 18px; border-radius:14px; transition:background .3s ease, transform .3s var(--ease); }
   .trust-item:hover{ background:var(--surface); transform:translateY(-4px); }
   .trust-ic{ width:52px; height:52px; margin:0 auto 15px; border-radius:50%; border:1px solid var(--accent); color:var(--accent); display:flex; align-items:center; justify-content:center; background:var(--accent-soft); }
-  .trust-item span{ font-size:0.78rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; line-height:1.5; display:block; }
+  /* the label only: unscoped, this also hit .trust-ic and its display:block beat the
+     circle's display:flex, leaving the glyph sitting on a text baseline near the top */
+  .trust-item span:not(.trust-ic){ font-size:0.78rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; line-height:1.5; display:block; }
 
   /* ============ CURRENCY + DEPOSIT ============ */
   .cur-toggle{ display:flex; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:3px; }
