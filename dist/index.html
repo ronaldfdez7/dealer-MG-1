@@ -145,6 +145,7 @@
   .btn-ghost{ background:transparent; color:var(--ink); border:1.5px solid var(--line); }
   .btn-ghost:hover{ border-color:var(--accent); background:var(--accent-soft); }
   .btn-block{ width:100%; }
+  .btn-block:active{ transform:scale(.98); }
 
   /* ============ NAV ============ */
   header{ position:fixed; top:0; left:0; right:0; z-index:100; border-bottom:1px solid transparent; transition:background .3s ease, border-color .3s ease; }
@@ -264,24 +265,14 @@
   .text-link::after{ content:'\2192'; transition:transform .25s var(--ease); }
   .text-link:hover{ gap:14px; color:var(--accent); }
   .text-link:hover::after{ transform:translateX(3px); }
-  .hero-cue{
-    position:absolute; left:50%; bottom:26px; transform:translateX(-50%); z-index:3;
-    display:flex; flex-direction:column; align-items:center; gap:9px;
-    font-size:0.62rem; letter-spacing:0.24em; text-transform:uppercase; color:var(--muted);
-  }
-  .hero-cue i{ display:block; width:1px; height:34px; background:linear-gradient(var(--accent), transparent); animation:cueDrop 2.2s ease-in-out infinite; }
-  @keyframes cueDrop{ 0%,100%{ transform:scaleY(.4); opacity:.4; transform-origin:top; } 50%{ transform:scaleY(1); opacity:1; transform-origin:top; } }
-  @media (max-height:700px){ .hero-cue{ display:none; } }
 
   /* the hero is a lit stage, not a themed panel: it keeps its own light-on-dark
      palette in day mode too, otherwise the photo washes out behind pale text */
   #hero .chrome{
     background-image:linear-gradient(180deg,#FFFFFF 0%,#DCE7F5 40%,#93A8C4 64%,#F4F8FD 100%);
   }
-  #hero .hero-kicker{ color:rgba(226,236,250,0.82); }
   #hero .text-link{ color:#fff; }
   #hero .text-link:hover{ color:#7FD4FF; }
-  .hero-cue{ color:var(--muted); }
 
   section{ padding:132px 0; position:relative; }
   @media (max-width:640px){ section{ padding:70px 0; } }
@@ -351,9 +342,15 @@
     border-radius:16px; padding:34px 30px; position:relative; overflow:hidden;
     transition:border-color .3s ease, transform .3s var(--ease);
   }
-  .stepcard::before{ content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0; transition:opacity .3s ease; }
+  .stepcard::before{ content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0; transition:opacity .3s ease; z-index:2; }
   .stepcard.active{ border-color:var(--accent); transform:translateY(-6px); }
   .stepcard.active::before{ opacity:1; }
+  .stepcard::after{
+    content:''; position:absolute; inset:0; pointer-events:none; opacity:0; z-index:1;
+    background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%), var(--accent-soft), transparent 65%);
+    transition:opacity .35s ease;
+  }
+  .stepcard:hover::after{ opacity:1; }
   .stepcard .idx{ font-family:'Archivo'; font-style:italic; font-weight:900; font-size:3.4rem; line-height:1; color:var(--accent-soft); -webkit-text-stroke:1px var(--accent); }
   .stepcard .ic{ width:56px; height:56px; border-radius:50%; border:2px solid var(--accent); color:var(--accent); display:flex; align-items:center; justify-content:center; margin:18px 0 20px; background:var(--accent-soft); }
   .stepcard h3{ font-size:1.15rem; font-style:normal; letter-spacing:0.02em; }
@@ -410,10 +407,17 @@
   .pay-methods{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:52px; }
   @media (max-width:900px){ .pay-methods{ grid-template-columns:1fr; } }
   .pay-card{
+    position:relative; overflow:hidden;
     border:1px solid var(--line); border-radius:16px; padding:30px 28px; background:var(--surface);
     display:flex; flex-direction:column; transition:border-color .3s ease, transform .3s var(--ease);
   }
   .pay-card:hover{ border-color:var(--accent); transform:translateY(-4px); }
+  .pay-card::after{
+    content:''; position:absolute; inset:0; pointer-events:none; opacity:0;
+    background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%), var(--accent-soft), transparent 65%);
+    transition:opacity .35s ease;
+  }
+  .pay-card:hover::after{ opacity:1; }
   .pay-ic{
     width:48px; height:48px; border-radius:12px; background:var(--accent-soft); color:var(--accent);
     display:flex; align-items:center; justify-content:center; margin-bottom:20px;
@@ -523,7 +527,7 @@
     *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
     .reveal,.line-mask > span{ opacity:1 !important; transform:none !important; }
     .hero-layer img{ transform:none !important; }
-    .beam,.spark,.hero-cue i{ display:none; }
+    .beam,.spark{ display:none; }
   }
 </style>
 
@@ -715,13 +719,11 @@
   <div class="hero-inner wrap">
     <h1 id="heroTitle" class="chrome" data-i18n="hero_title"><span class="line-mask"><span>Can't find</span></span><span class="line-mask"><span>the right car?</span></span></h1>
     <div class="hero-blue reveal"><span class="on-blue" data-i18n="hero_blue">We'll find it for you!</span></div>
-    <p class="hero-kicker reveal" data-i18n="hero_kicker">Special orders &mdash; any brand, any make.</p>
     <div class="hero-ctas reveal">
       <button class="btn btn-primary" data-scroll="#solicitar" data-i18n="hero_cta1">Tell us what you want</button>
       <a class="text-link" href="https://wa.me/18764043325" target="_blank" rel="noopener noreferrer" data-i18n="hero_cta2">WhatsApp us</a>
     </div>
   </div>
-  <div class="hero-cue"><span data-i18n="cue">Scroll</span><i></i></div>
 </section>
 
 <section id="promesa">
@@ -753,7 +755,6 @@
     <div class="world-grid">
       <div class="globe-stage reveal"><canvas id="globe"></canvas></div>
       <div class="reveal">
-        <span class="eyebrow" data-i18n="w_eyebrow">Worldwide sourcing</span>
         <h2 class="chrome" data-i18n="w_title">We search the whole world for it</h2>
         <p class="lead" data-i18n="w_lead">Japan, Germany, the UK, the United States. We work the auctions and the dealer networks other buyers can't reach &mdash; then land the car in Jamaica, cleared and ready.</p>
         <div class="feed">
@@ -828,7 +829,6 @@
   <div class="wrap">
     <div class="request-grid reveal">
       <div class="request-form">
-        <span class="eyebrow" data-i18n="r_eyebrow">Special order</span>
         <h2 class="chrome" data-i18n="r_title">Tell us what you're looking for</h2>
         <form id="reqForm">
           <div class="req-fields">
@@ -981,9 +981,7 @@
       en:'<span class="line-mask"><span>Can\'t find</span></span><span class="line-mask"><span>the right car?</span></span>',
       es:'<span class="line-mask"><span>¿No encuentras</span></span><span class="line-mask"><span>el auto que buscas?</span></span>'},
     hero_blue:{en:"We'll find it for you!",es:'¡Nosotros lo buscamos por ti!'},
-    hero_kicker:{en:'Special orders &mdash; any brand, any make.',es:'Pedidos especiales &mdash; cualquier marca, cualquier modelo.'},
     hero_cta1:{en:'Tell us what you want',es:'Dinos qué buscas'}, hero_cta2:{en:'WhatsApp us',es:'Escríbenos'},
-    cue:{en:'Scroll',es:'Desliza'},
     p_eyebrow:{en:'Step one',es:'Primer paso'}, p_title:{en:'Tell us what you want',es:'Dinos qué quieres'},
     p_c1:{en:'Any brand or make',es:'Cualquier marca'},
     p_c2:{en:'A specific year',es:'Un año específico'},
@@ -992,7 +990,6 @@
               es:'Buscamos las mejores opciones en todo el mundo y te conseguimos el <strong>mejor precio posible</strong> &mdash; y luego nos encargamos del papeleo, el envío y la entrega, hasta tus manos.'},
     band_1:{en:'Your car. Your way. Your budget.',es:'Tu auto. A tu manera. Tu presupuesto.'},
     band_2:{en:'We make it happen.',es:'Nosotros lo hacemos realidad.'},
-    w_eyebrow:{en:'Worldwide sourcing',es:'Búsqueda mundial'},
     w_title:{en:'We search the whole world for it',es:'Lo buscamos en todo el mundo'},
     w_lead:{en:"Japan, Germany, the UK, the United States. We work the auctions and the dealer networks other buyers can't reach &mdash; then land the car in Jamaica, cleared and ready.",
             es:'Japón, Alemania, Reino Unido, Estados Unidos. Trabajamos las subastas y las redes de distribuidores que otros compradores no alcanzan &mdash; y traemos el auto hasta Jamaica, despachado y listo.'},
@@ -1004,7 +1001,6 @@
     s4_t:{en:'You drive',es:'Manejas'}, s4_d:{en:'Shipping, paperwork and clearance are ours to handle. You collect the keys.',es:'El envío, el papeleo y el despacho corren por nuestra cuenta. Tú recoges las llaves.'},
     t1:{en:'Trusted service',es:'Servicio confiable'}, t2:{en:'Competitive prices',es:'Precios competitivos'},
     t3:{en:'Worldwide sourcing',es:'Búsqueda mundial'}, t4:{en:'Dedicated to you',es:'Dedicados a ti'},
-    r_eyebrow:{en:'Special order',es:'Pedido especial'},
     r_title:{en:"Tell us what you're looking for",es:'Dinos qué estás buscando'},
     l_name:{en:'Your name',es:'Tu nombre'}, l_contact:{en:'Phone or WhatsApp',es:'Teléfono o WhatsApp'},
     l_make:{en:'Brand or make',es:'Marca'}, l_model:{en:'Model',es:'Modelo'},
@@ -1595,6 +1591,47 @@
       heroEl.appendChild(sp);
     }
   }
+
+  /* ---------------- magnetic CTAs + spotlight-border cards ---------------- */
+  function initMagneticButtons(){
+    if (reduce || !matchMedia('(pointer:fine)').matches) return;
+    var els = document.querySelectorAll('.btn-primary:not(.btn-block)');
+    els.forEach(function(el){
+      var x = 0, y = 0, pressed = false;
+      function apply(transition){
+        el.style.transition = transition;
+        el.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)' + (pressed ? ' scale(.96)' : '');
+      }
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect();
+        var max = 9;
+        x = Math.max(-max, Math.min(max, (e.clientX - (r.left + r.width/2)) * 0.32));
+        y = Math.max(-max, Math.min(max, (e.clientY - (r.top + r.height/2)) * 0.32));
+        apply('transform .15s cubic-bezier(.16,1,.3,1)');
+      });
+      el.addEventListener('pointerdown', function(){ pressed = true; apply('transform .1s ease'); });
+      el.addEventListener('pointerup', function(){ pressed = false; apply('transform .2s cubic-bezier(.16,1,.3,1)'); });
+      el.addEventListener('pointerleave', function(){
+        x = 0; y = 0; pressed = false;
+        apply('transform .5s cubic-bezier(.34,1.56,.64,1)');
+      });
+    });
+  }
+
+  function initSpotlightCards(){
+    if (reduce || !matchMedia('(pointer:fine)').matches) return;
+    var els = document.querySelectorAll('.stepcard, .pay-card');
+    els.forEach(function(el){
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+  }
+
+  initMagneticButtons();
+  initSpotlightCards();
 
   applyLang('en');
   layoutJourney();
