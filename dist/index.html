@@ -1361,14 +1361,21 @@
   addEventListener('scroll', onScroll, { passive:true });
   addEventListener('resize', function(){ layoutJourney(); onScroll(); });
 
-  /* mouse tilt gives the hero real depth */
+  /* mouse tilt gives the hero real depth - batched to one write per frame, same as onScroll */
   if (!reduce && matchMedia('(pointer:fine)').matches){
+    var tiltQueued = false, tiltX = 0, tiltY = 0;
     addEventListener('mousemove', function(e){
       if (scrollY > innerHeight) return;
-      var dx = (e.clientX/innerWidth - 0.5), dy = (e.clientY/innerHeight - 0.5);
-      heroLayer.style.setProperty('--tx', (dx*-16)+'px');
-      heroLayer.style.setProperty('--ty', (dy*-12)+'px');
-      heroLayer.style.transform = 'translate3d('+(dx*-16)+'px,'+((scrollY*0.26)+dy*-12)+'px,0)';
+      tiltX = e.clientX; tiltY = e.clientY;
+      if (tiltQueued) return;
+      tiltQueued = true;
+      requestAnimationFrame(function(){
+        tiltQueued = false;
+        var dx = (tiltX/innerWidth - 0.5), dy = (tiltY/innerHeight - 0.5);
+        heroLayer.style.setProperty('--tx', (dx*-16)+'px');
+        heroLayer.style.setProperty('--ty', (dy*-12)+'px');
+        heroLayer.style.transform = 'translate3d('+(dx*-16)+'px,'+((scrollY*0.26)+dy*-12)+'px,0)';
+      });
     }, { passive:true });
   }
 
@@ -1608,6 +1615,7 @@
     cv.addEventListener('pointercancel', up);
     cv.addEventListener('pointerleave', function(){ if (dragging) up(); });
 
+    var raf = null, onScreen = false;
     function frame(now){
       if (!dragging){
         // let the throw decay, then drift on its own again
@@ -1620,12 +1628,28 @@
         }
       }
       draw(now);
-      requestAnimationFrame(frame);
+      raf = onScreen ? requestAnimationFrame(frame) : null;
     }
 
-    addEventListener('resize', function(){ size(); if (reduce) draw(performance.now()); });
-    size(); readColors();
-    if (reduce) draw(performance.now()); else requestAnimationFrame(frame);
+    addEventListener('resize', function(){ size(); if (reduce || !onScreen) draw(performance.now()); });
+    size(); readColors(); draw(performance.now());   // one static frame so it's never blank
+
+    // the point cloud is ~3600 arc()+fill() calls a frame, plus five shadowBlur route
+    // arcs - thousands of draw calls and string allocations every tick. Running that
+    // forever from page load, regardless of scroll position, competed with the hero
+    // video for the main thread from the very first second. Only pay for it while the
+    // globe is actually the thing on screen.
+    if (reduce){
+      // already drawn once above; reduced motion never runs the loop
+    } else if ('IntersectionObserver' in window){
+      new IntersectionObserver(function(entries){
+        onScreen = entries[entries.length - 1].isIntersecting;
+        if (onScreen && raf === null) raf = requestAnimationFrame(frame);
+      }, { rootMargin: '200px 0px' }).observe(cv);
+    } else {
+      onScreen = true;
+      raf = requestAnimationFrame(frame);
+    }
   })();
   /* ---------------- floating sparks in the hero ---------------- */
   if (!reduce){
