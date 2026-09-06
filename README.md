@@ -37,6 +37,10 @@ son las tipografías de Google Fonts (Archivo y Plus Jakarta Sans).
 - **Inventario** (`#inventario`): parrilla de autos en stock con foto, specs, precio y
   estado, **leída en vivo desde la base de datos** (Supabase). Los precios siguen el
   selector USD/JMD igual que la sección de depósito
+- **Cuentas de cliente**: registro, inicio de sesión, cierre de sesión y recuperación
+  de contraseña. La sesión sobrevive a recargas y se renueva sola
+- **Autos guardados**: con sesión iniciada, el corazón de cada auto lo guarda en la
+  cuenta, y un filtro deja ver solo los guardados
 - **Formulario de solicitud**: marca, modelo, año y presupuesto
 - **Sección de depósito** con tres vías de pago y conversor de moneda
 - **Bilingüe** inglés / español, y **modo día / noche** que respeta el ajuste del
@@ -86,21 +90,46 @@ Proyecto: `ronaldfdez Dealer MJ` → https://uampqldgiditxueqmtlj.supabase.co
 invisible para el sitio, aunque exista en la tabla. Sirve para preparar una ficha con
 calma sin que salga a medio llenar.
 
+### ⚠️ Falta configurar el envío de correos antes de abrir el registro al público
+
+Supabase trae un servicio de correo incluido, pero **solo envía a direcciones
+preautorizadas** (las del equipo del proyecto), tiene un límite bajo por hora y su
+propia documentación dice que **no es para producción**.
+
+Traducido: un cliente real que se registre **no recibirá** el correo de confirmación
+ni el de recuperar contraseña. Funciona para probar con tu propio correo, nada más.
+
+Para abrirlo al público hay que conectar un SMTP propio en
+**Authentication → SMTP Settings**. Hay opciones gratuitas suficientes para este
+volumen (Brevo, Resend, Mailgun). Es una configuración de una sola vez, ~15 minutos.
+
+También conviene revisar en **Authentication → URL Configuration** que el *Site URL*
+apunte a https://total-trading-limited.netlify.app, porque de ahí salen los enlaces
+de confirmación y de recuperación de contraseña.
+
 ### Seguridad
 
 La llave que va en `dist/index.html` es la **llave publicable**, hecha para ser pública.
-Lo que realmente protege los datos es el row-level security de la tabla: con esa llave
-solo se pueden **leer** los autos publicados. Insertar, modificar y borrar están
-prohibidos — comprobado con pruebas contra la base. Editar solo se puede desde el panel
-de Supabase, con la cuenta del dueño.
+Lo que realmente protege los datos es el row-level security de las tablas:
+
+- **`cars`**: con la llave publicable solo se pueden **leer** los autos publicados.
+  Insertar, modificar y borrar están prohibidos. Editar solo se puede desde el panel
+  de Supabase, con la cuenta del dueño.
+- **`favourites`**: cada política está atada a `auth.uid()`, así que un cliente con
+  sesión solo alcanza **sus propias** filas. Comprobado contra la base: un usuario no
+  ve los guardados de otro, no puede guardar en su nombre ni borrarle nada, y alguien
+  sin sesión no ve ninguno.
+
+> La llave publicable viaja **solo en la cabecera `apikey`**. Supabase intenta leer la
+> cabecera `Authorization: Bearer` como un JWT y rechaza la petición con "Invalid JWT"
+> si le llega ahí. En `Authorization` solo va el token de sesión del propio usuario.
 
 > La llave `service_role` / `sb_secret_...` **nunca** debe ir en el sitio ni compartirse.
 
-## Próxima fase: cuentas de cliente y pago en línea
+## Próxima fase: pago en línea
 
 1. ~~Inventario navegable conectado a base de datos~~ — **hecho**.
-2. **Cuentas de cliente** — login/registro con recuperación de contraseña, usando la
-   autenticación que ya viene incluida en este mismo proyecto de Supabase.
+2. ~~Cuentas de cliente~~ — **hecho**, pendiente solo el SMTP (ver aviso arriba).
 3. **Pago en línea** — bloqueado hasta decidir con el cliente qué procesador va a usar
    en Jamaica (WiPay, First Atlantic Commerce, Stripe, PayPal Business…). Sin cuenta de
    comercio no hay nada real que conectar. Cuando exista, el cobro debe autorizarse en
@@ -130,5 +159,8 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
       6 autos cargados son ficticios y sin foto. Falta que el negocio cargue los autos
       reales (ver "Cómo agregar o editar autos" arriba) y borre los de muestra. El
       aviso de "autos de muestra" bajo la parrilla debe quitarse en ese momento.
-- [ ] **Login de clientes y pago en línea** — todavía no existen; el pago depende de
-      que se decida el procesador. Ver "Próxima fase".
+- [ ] **SMTP para las cuentas** — el registro y la recuperación de contraseña ya
+      funcionan, pero los correos solo llegan a direcciones preautorizadas hasta
+      conectar un SMTP propio. Ver el aviso en la sección de la base de datos.
+- [ ] **Pago en línea** — todavía no existe; depende de que se decida el procesador.
+      Ver "Próxima fase".

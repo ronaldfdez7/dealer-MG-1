@@ -174,8 +174,17 @@
   .lang-toggle button.active{ background:var(--accent); color:#fff; }
   .hamburger{ display:none; }
   @media (max-width:1180px){
-    .navlinks{ display:none; } .nav-desktop .lang-toggle, .nav-desktop .btn{ display:none; }
+    /* the account button lives in the mobile menu instead, same as the CTA -
+       left in the bar it pushes the hamburger off a narrow screen */
+    .navlinks{ display:none; } .nav-desktop .lang-toggle, .nav-desktop .btn, .nav-desktop .acct-btn{ display:none; }
     .hamburger{ display:flex; }
+  }
+  /* on a narrow phone the brand, the currency pair, the theme button and the menu
+     button together overrun the bar and the menu button gets clipped off the right
+     edge - body{overflow-x:hidden} hides that rather than fixing it. The currency
+     pair is already repeated inside the mobile menu, so it is the one to drop. */
+  @media (max-width:520px){
+    .nav-desktop .cur-toggle{ display:none; }
   }
 
   /* while the bar floats over the hero it belongs to the dark stage, not to the theme;
@@ -488,6 +497,78 @@
   .inv-photo svg{ width:58%; height:auto; opacity:0.55; }
   .inv-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
   .inv-state{ margin-top:36px; text-align:center; color:var(--muted); font-size:0.92rem; line-height:1.7; }
+
+  .inv-fav{
+    position:absolute; top:12px; left:12px; z-index:3; width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    background:var(--bg); border:1px solid var(--line); color:var(--muted);
+    transition:color .2s ease, border-color .2s ease, transform .2s var(--ease);
+  }
+  .inv-fav:hover{ color:var(--accent); border-color:var(--accent); transform:scale(1.08); }
+  .inv-fav:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .inv-fav[aria-pressed="true"]{ color:var(--accent); border-color:var(--accent); }
+  .inv-fav[aria-pressed="true"] svg{ fill:currentColor; }
+  .inv-fav[disabled]{ opacity:.55; cursor:progress; }
+
+  .inv-filter{
+    margin-top:20px; display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+    font-size:0.82rem; font-weight:700; color:var(--muted); border:1px solid var(--line);
+    background:transparent; border-radius:999px; padding:9px 16px;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .inv-filter:hover{ color:var(--accent); border-color:var(--accent); }
+  .inv-filter[aria-pressed="true"]{ color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+  .inv-filter:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  /* ============ ACCOUNT ============ */
+  .acct-btn{ position:relative; }
+  .acct-initial{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    border-radius:inherit; background:linear-gradient(180deg,var(--accent),var(--accent-deep));
+    color:#fff; font-weight:800; font-size:0.82rem; text-transform:uppercase;
+  }
+  .acct-btn.signed svg{ visibility:hidden; }
+
+  .auth-backdrop{
+    position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center;
+    padding:22px; background:rgba(4,9,16,0.62); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    animation:authFade .2s ease;
+  }
+  @keyframes authFade{ from{ opacity:0; } }
+  .auth-panel{
+    position:relative; width:100%; max-width:400px; max-height:calc(100vh - 44px); overflow-y:auto;
+    background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:34px 30px 28px;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,0.55); animation:authRise .28s var(--ease);
+  }
+  @keyframes authRise{ from{ opacity:0; transform:translateY(14px); } }
+  @media (prefers-reduced-motion: reduce){
+    .auth-backdrop, .auth-panel{ animation:none; }
+  }
+  .auth-panel h3{ font-size:1.3rem; }
+  .auth-sub{ color:var(--muted); font-size:0.87rem; line-height:1.7; margin:10px 0 22px; }
+  .auth-panel .field{ margin-bottom:16px; }
+  .auth-close{
+    position:absolute; top:14px; right:14px; width:32px; height:32px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    background:transparent; border:1px solid var(--line); color:var(--muted);
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .auth-close:hover{ color:var(--accent); border-color:var(--accent); }
+  .auth-close:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .auth-msg{
+    border-radius:10px; padding:13px 15px; font-size:0.83rem; line-height:1.6; margin-bottom:16px;
+    border:1px solid var(--accent); background:var(--accent-soft); color:var(--ink);
+  }
+  .auth-msg.bad{ border-color:#dc2626; background:rgba(220,38,38,0.1); }
+  .auth-links{
+    display:flex; flex-wrap:wrap; gap:8px 18px; justify-content:space-between;
+    margin-top:18px; font-size:0.82rem;
+  }
+  .auth-links .text-link{ background:none; border:none; padding:0; cursor:pointer; font:inherit; color:var(--accent); font-weight:700; }
+  .auth-links .text-link:hover{ text-decoration:underline; }
+  .auth-links .text-link:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+  .auth-as{ font-size:0.87rem; color:var(--muted); margin:0 0 16px; word-break:break-word; }
+  .auth-as b{ color:var(--ink); }
   .inv-photo-note{
     position:absolute; bottom:10px; left:10px; font-size:0.62rem; font-weight:700; letter-spacing:0.08em;
     text-transform:uppercase; color:var(--muted); background:var(--bg); border:1px solid var(--line);
@@ -745,6 +826,10 @@
           <svg class="ic-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
           <svg class="ic-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" hidden><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
         </button>
+        <button class="icon-btn acct-btn" id="acctBtn" aria-label="Account" aria-haspopup="dialog">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c0-3.9 3.4-6.3 7.5-6.3s7.5 2.4 7.5 6.3"/></svg>
+          <span class="acct-initial" id="acctInitial" hidden></span>
+        </button>
         <button class="btn btn-primary" data-scroll="#solicitar" data-i18n="nav_cta">Request a car</button>
       </div>
       <button class="icon-btn theme-btn hamburger-extra" aria-label="Day / night" style="display:none">
@@ -780,6 +865,7 @@
       <svg class="ic-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" hidden><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
     </button>
   </div>
+  <button class="btn btn-ghost" id="acctBtnMobile" data-i18n="auth_open">Log in</button>
   <button class="btn btn-primary" data-scroll="#solicitar" data-i18n="nav_cta">Request a car</button>
 </div>
 
@@ -829,6 +915,10 @@
     <div class="inv-head reveal">
       <h2 class="chrome" data-i18n="inv_title">Ready to drive today</h2>
       <p class="inv-lead" data-i18n="inv_lead">A small, changing selection of vehicles already in Jamaica, inspected and ready for immediate sale &mdash; no waiting on a search.</p>
+      <button type="button" class="inv-filter" id="invFilter" aria-pressed="false" hidden>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5S3.5 15 3.5 8.9A4.4 4.4 0 0 1 12 6.7a4.4 4.4 0 0 1 8.5 2.2c0 6.1-8.5 11.6-8.5 11.6z"/></svg>
+        <span data-i18n="inv_only_saved">Only my saved cars</span>
+      </button>
     </div>
     <div class="inv-grid reveal" id="invGrid"></div>
     <p class="inv-state" id="invState" data-i18n="inv_loading">Loading the inventory&hellip;</p>
@@ -1054,6 +1144,41 @@
   </div>
 </footer>
 
+<div class="auth-backdrop" id="authBackdrop" hidden>
+  <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle" id="authPanel">
+    <button class="auth-close" id="authClose" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+
+    <h3 id="authTitle" data-i18n="auth_t_in">Welcome back</h3>
+    <p class="auth-sub" id="authSub" data-i18n="auth_s_in">Sign in to save the cars you like.</p>
+
+    <form id="authForm" novalidate>
+      <div class="field">
+        <label for="authEmail" data-i18n="auth_email">Email</label>
+        <input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+      </div>
+      <div class="field" id="authPassWrap">
+        <label for="authPass" data-i18n="auth_pass">Password</label>
+        <input id="authPass" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••">
+      </div>
+
+      <div class="auth-msg" id="authMsg" hidden></div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="authSubmit" data-i18n="auth_in">Sign in</button>
+    </form>
+
+    <div class="auth-links">
+      <button type="button" class="text-link" id="authToReset" data-i18n="auth_forgot">Forgot your password?</button>
+      <button type="button" class="text-link" id="authSwap" data-i18n="auth_to_up">Create an account</button>
+    </div>
+
+    <div class="auth-signed" id="authSigned" hidden>
+      <p class="auth-as"><span data-i18n="auth_as">Signed in as</span> <b id="authWho"></b></p>
+      <button type="button" class="btn btn-ghost btn-block" id="authOut" data-i18n="auth_out">Log out</button>
+    </div>
+  </div>
+</div>
 <a id="waBubble" href="https://wa.me/18764043325" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-10 4.5-10 10 0 1.77.46 3.45 1.27 4.9L2 22l5.25-1.28A9.94 9.94 0 0 0 12.04 22c5.5 0 10-4.5 10-10s-4.5-10-10-10zm5.83 14.2c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.05.24-3.52-.73-2.96-1.16-4.87-4.16-5.02-4.35-.15-.2-1.2-1.6-1.2-3.05s.77-2.17 1.04-2.47c.27-.3.6-.37.8-.37h.58c.19 0 .43-.03.67.51.24.55.83 1.9.9 2.04.07.14.12.3.02.5-.1.2-.15.32-.3.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.6.17.3.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.47.3.15.47.13.65-.08.17-.2.72-.85.92-1.14.2-.3.4-.24.66-.14.27.1 1.7.8 2 .95.3.15.5.22.57.35.07.13.07.75-.17 1.43z"/></svg>
   <span class="wa-label" data-i18n="wa_label">WhatsApp us</span>
@@ -1096,6 +1221,49 @@
                es:'No hay vehículos en stock por ahora. Dinos qué buscas y lo conseguimos para ti.'},
     inv_error:{en:"The inventory couldn't be loaded just now. Please refresh the page, or contact us and we'll tell you what's available.",
                es:'No se pudo cargar el inventario en este momento. Recarga la página, o contáctanos y te decimos qué hay disponible.'},
+    inv_only_saved:{en:'Only my saved cars',es:'Solo mis autos guardados'},
+    inv_none_saved:{en:"You haven't saved any cars yet. Tap the heart on a car to keep it here.",
+                    es:'Todavía no has guardado ningún auto. Toca el corazón de un auto para guardarlo aquí.'},
+    fav_add:{en:'Save this car',es:'Guardar este auto'},
+    fav_remove:{en:'Remove from saved',es:'Quitar de guardados'},
+
+    /* account */
+    auth_open:{en:'Log in',es:'Iniciar sesión'},
+    auth_t_in:{en:'Welcome back',es:'Bienvenido de nuevo'},
+    auth_s_in:{en:'Sign in to save the cars you like.',es:'Inicia sesión para guardar los autos que te gusten.'},
+    auth_t_up:{en:'Create your account',es:'Crea tu cuenta'},
+    auth_s_up:{en:'Save the cars you like and pick up where you left off.',es:'Guarda los autos que te gusten y retoma donde lo dejaste.'},
+    auth_t_reset:{en:'Reset your password',es:'Restablecer tu contraseña'},
+    auth_s_reset:{en:"Enter your email and we'll send you a link to set a new password.",
+                  es:'Escribe tu correo y te enviamos un enlace para poner una nueva contraseña.'},
+    auth_t_acct:{en:'Your account',es:'Tu cuenta'},
+    auth_s_acct:{en:'The cars you save are kept to your account.',es:'Los autos que guardas quedan en tu cuenta.'},
+    auth_email:{en:'Email',es:'Correo'},
+    auth_pass:{en:'Password',es:'Contraseña'},
+    auth_in:{en:'Sign in',es:'Entrar'},
+    auth_up:{en:'Create account',es:'Crear cuenta'},
+    auth_send:{en:'Send the link',es:'Enviar el enlace'},
+    auth_out:{en:'Log out',es:'Cerrar sesión'},
+    auth_as:{en:'Signed in as',es:'Sesión iniciada como'},
+    auth_forgot:{en:'Forgot your password?',es:'¿Olvidaste tu contraseña?'},
+    auth_to_up:{en:'Create an account',es:'Crear una cuenta'},
+    auth_to_in:{en:'I already have an account',es:'Ya tengo una cuenta'},
+    auth_working:{en:'One moment…',es:'Un momento…'},
+    auth_need_email:{en:'Please enter a valid email address.',es:'Escribe un correo válido.'},
+    auth_need_pass:{en:'Your password needs at least 6 characters.',es:'La contraseña necesita al menos 6 caracteres.'},
+    auth_bad_login:{en:'That email and password do not match. Check them and try again.',
+                    es:'Ese correo y contraseña no coinciden. Revísalos e inténtalo de nuevo.'},
+    auth_exists:{en:'There is already an account with that email. Try signing in instead.',
+                 es:'Ya existe una cuenta con ese correo. Prueba a iniciar sesión.'},
+    auth_check_mail:{en:'Almost there — open the confirmation link we just emailed you, then sign in.',
+                     es:'Casi listo — abre el enlace de confirmación que te enviamos por correo y luego inicia sesión.'},
+    auth_reset_sent:{en:"If that email has an account, a reset link is on its way to it.",
+                     es:'Si ese correo tiene una cuenta, el enlace para restablecerla va en camino.'},
+    auth_welcome:{en:'You are in. Your saved cars will follow you from now on.',
+                  es:'Ya estás dentro. Tus autos guardados te seguirán a partir de ahora.'},
+    auth_down:{en:"We couldn't reach the account service. Please check your connection and try again.",
+               es:'No pudimos contactar el servicio de cuentas. Revisa tu conexión e inténtalo de nuevo.'},
+    auth_need_login:{en:'Sign in to save cars to your account.',es:'Inicia sesión para guardar autos en tu cuenta.'},
     inv_note:{en:'Sample listings shown while the real inventory photos and prices are being added &mdash; nothing here is for sale yet.',
               es:'Autos de muestra mientras se cargan las fotos y precios reales del inventario &mdash; todavía nada aquí está a la venta.'},
     w_title:{en:'We search the whole world for it',es:'Lo buscamos en todo el mundo'},
@@ -1157,8 +1325,15 @@
       var k = el.getAttribute('data-i18n');
       if (dict[k] && dict[k][l] !== undefined) el.innerHTML = dict[k][l];
     });
+    // buttons whose label lives in aria-label/title rather than in their text
+    document.querySelectorAll('[data-i18n-label]').forEach(function(el){
+      var k = el.getAttribute('data-i18n-label');
+      if (dict[k] && dict[k][l] !== undefined){ el.setAttribute('aria-label', dict[k][l]); el.title = dict[k][l]; }
+    });
     document.querySelectorAll('.lang-toggle button').forEach(function(b){ b.classList.toggle('active', b.dataset.lang === l); });
     root.lang = l;
+    if (typeof paintAccount === 'function') paintAccount();
+    if (typeof authUI === 'object' && authUI) authUI.refresh();
     document.getElementById('fName').placeholder = (l === 'en' ? 'John Brown' : 'Juan Pérez');
     document.getElementById('fBudget').placeholder = (l === 'en' ? 'e.g. 5,000,000' : 'ej. 5,000,000');
     rearmHero(); buildFeed(); paintMoney();
@@ -1800,27 +1975,351 @@
   initMagneticButtons();
   initSpotlightCards();
 
-  /* ---------------- inventory, read from the database ----------------
-     Reads straight from PostgREST with fetch - no client library needed for one
-     query. The key below is the project's publishable key: it is meant to ship in
-     public code. What actually guards the data is row-level security on the table,
-     which allows exactly one thing with this key - reading rows marked published.
-     Inserts, updates and deletes are all refused. */
-  (function(){
+  /* ---------------- Supabase: accounts, saved cars, inventory ----------------
+     The key below is the project's publishable key and belongs in public code.
+     What guards the data is row-level security: with this key alone you can read
+     published cars and nothing else. Saved cars sit behind policies pinned to
+     auth.uid(), so a signed-in customer only ever reaches their own rows. */
+  var SUPABASE_URL = 'https://uampqldgiditxueqmtlj.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_bieVJhEb2nvn_lHUEb-miw_6HzzMnBK';
+
+  /* A publishable key must travel on `apikey` only - Supabase tries to parse an
+     Authorization Bearer header as a JWT and rejects the key there. A user's own
+     access token IS a JWT, so that one does belong in Authorization. */
+  function anonHeaders(){
+    return { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' };
+  }
+  function userHeaders(token){
+    return { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' };
+  }
+
+  var auth = (function(){
+    var STORE = 'ttl.session';
+    var listeners = [];
+    var session = null;
+
+    try { session = JSON.parse(localStorage.getItem(STORE) || 'null'); }
+    catch (e){ session = null; }          // private mode, or storage disabled
+
+    function save(s){
+      session = s;
+      try {
+        if (s) localStorage.setItem(STORE, JSON.stringify(s));
+        else localStorage.removeItem(STORE);
+      } catch (e){}
+      listeners.forEach(function(fn){ try { fn(s); } catch (e){} });
+    }
+
+    function call(path, body, token){
+      return fetch(SUPABASE_URL + path, {
+        method: 'POST',
+        headers: token ? userHeaders(token) : anonHeaders(),
+        body: body ? JSON.stringify(body) : undefined
+      }).then(function(r){
+        return r.text().then(function(txt){
+          var data = null;
+          try { data = txt ? JSON.parse(txt) : null; } catch (e){}
+          if (!r.ok){
+            var err = new Error((data && (data.msg || data.message || data.error_description)) || ('HTTP ' + r.status));
+            err.status = r.status;
+            throw err;
+          }
+          return data;
+        });
+      });
+    }
+
+    // a session comes back from sign-in, and from sign-up when the project does
+    // not require email confirmation; when it does, sign-up returns only a user
+    function keep(res){
+      if (!res || !res.access_token) return false;
+      save({
+        access_token: res.access_token,
+        refresh_token: res.refresh_token,
+        expires_at: Date.now() + ((res.expires_in || 3600) * 1000),
+        user: res.user || (session && session.user) || null
+      });
+      return true;
+    }
+
+    // exchanged a minute early so a request never leaves with a token that
+    // expires in flight
+    function token(){
+      if (!session) return Promise.resolve(null);
+      if (session.expires_at && Date.now() < session.expires_at - 60000){
+        return Promise.resolve(session.access_token);
+      }
+      if (!session.refresh_token){ save(null); return Promise.resolve(null); }
+      return call('/auth/v1/token?grant_type=refresh_token', { refresh_token: session.refresh_token })
+        .then(function(res){ keep(res); return session ? session.access_token : null; })
+        .catch(function(){ save(null); return null; });   // refresh token spent or revoked
+    }
+
+    return {
+      user: function(){ return session && session.user; },
+      token: token,
+      onChange: function(fn){ listeners.push(fn); },
+      signIn: function(email, pass){
+        return call('/auth/v1/token?grant_type=password', { email: email, password: pass })
+          .then(function(res){ keep(res); return res; });
+      },
+      signUp: function(email, pass){
+        return call('/auth/v1/signup', { email: email, password: pass })
+          .then(function(res){ return { signedIn: keep(res) }; });
+      },
+      reset: function(email){
+        return call('/auth/v1/recover', { email: email, redirect_to: location.origin + location.pathname });
+      },
+      signOut: function(){
+        var t = session && session.access_token;
+        save(null);
+        if (t) call('/auth/v1/logout', null, t).catch(function(){});   // best effort
+        return Promise.resolve();
+      }
+    };
+  })();
+
+  var favs = (function(){
+    var ids = {};
+    return {
+      has: function(id){ return ids[id] === true; },
+      count: function(){ return Object.keys(ids).length; },
+      forget: function(){ ids = {}; },
+      load: function(){
+        return auth.token().then(function(t){
+          if (!t){ ids = {}; return ids; }
+          return fetch(SUPABASE_URL + '/rest/v1/favourites?select=car_id', { headers: userHeaders(t) })
+            .then(function(r){ if (!r.ok) throw new Error('saved cars: ' + r.status); return r.json(); })
+            .then(function(rows){
+              ids = {};
+              rows.forEach(function(row){ ids[row.car_id] = true; });
+              return ids;
+            });
+        });
+      },
+      add: function(carId){
+        return auth.token().then(function(t){
+          var u = auth.user();
+          if (!t || !u) throw new Error('not signed in');
+          return fetch(SUPABASE_URL + '/rest/v1/favourites', {
+            method: 'POST', headers: userHeaders(t),
+            body: JSON.stringify({ user_id: u.id, car_id: carId })
+          }).then(function(r){
+            // 409 means it was already saved, which is the state we wanted anyway
+            if (!r.ok && r.status !== 409) throw new Error('save failed: ' + r.status);
+            ids[carId] = true;
+          });
+        });
+      },
+      remove: function(carId){
+        return auth.token().then(function(t){
+          if (!t) throw new Error('not signed in');
+          return fetch(SUPABASE_URL + '/rest/v1/favourites?car_id=eq.' + encodeURIComponent(carId), {
+            method: 'DELETE', headers: userHeaders(t)
+          }).then(function(r){
+            if (!r.ok) throw new Error('remove failed: ' + r.status);
+            delete ids[carId];
+          });
+        });
+      }
+    };
+  })();
+
+  function t(key){ return (dict[key] && dict[key][lang]) || ''; }
+
+  /* ---------------- the account dialog ---------------- */
+  var authUI = (function(){
+    var backdrop = document.getElementById('authBackdrop');
+    if (!backdrop) return { open: function(){}, refresh: function(){} };
+
+    var form     = document.getElementById('authForm');
+    var titleEl  = document.getElementById('authTitle');
+    var subEl    = document.getElementById('authSub');
+    var emailEl  = document.getElementById('authEmail');
+    var passEl   = document.getElementById('authPass');
+    var passWrap = document.getElementById('authPassWrap');
+    var msgEl    = document.getElementById('authMsg');
+    var submitEl = document.getElementById('authSubmit');
+    var linksEl  = document.querySelector('.auth-links');
+    var swapEl   = document.getElementById('authSwap');
+    var resetEl  = document.getElementById('authToReset');
+    var signedEl = document.getElementById('authSigned');
+    var whoEl    = document.getElementById('authWho');
+    var outEl    = document.getElementById('authOut');
+    var closeEl  = document.getElementById('authClose');
+
+    var view = 'in';
+    var busy = false;
+    var lastFocus = null;
+
+    var VIEWS = {
+      in:    { title:'auth_t_in',    sub:'auth_s_in',    submit:'auth_in',   swap:'auth_to_up' },
+      up:    { title:'auth_t_up',    sub:'auth_s_up',    submit:'auth_up',   swap:'auth_to_in' },
+      reset: { title:'auth_t_reset', sub:'auth_s_reset', submit:'auth_send', swap:'auth_to_in' },
+      acct:  { title:'auth_t_acct',  sub:'auth_s_acct' }
+    };
+
+    function say(key, bad){
+      msgEl.hidden = false;
+      msgEl.className = 'auth-msg' + (bad ? ' bad' : '');
+      msgEl.setAttribute('data-i18n', key);
+      msgEl.textContent = t(key);
+    }
+    function quiet(){ msgEl.hidden = true; msgEl.removeAttribute('data-i18n'); }
+
+    function setView(v){
+      view = v;
+      var cfg = VIEWS[v];
+      titleEl.setAttribute('data-i18n', cfg.title); titleEl.textContent = t(cfg.title);
+      subEl.setAttribute('data-i18n', cfg.sub);     subEl.textContent   = t(cfg.sub);
+
+      var signedIn = v === 'acct';
+      form.hidden = signedIn;
+      linksEl.hidden = signedIn;
+      signedEl.hidden = !signedIn;
+
+      if (signedIn){
+        var u = auth.user();
+        whoEl.textContent = (u && u.email) || '';
+        return;
+      }
+      passWrap.hidden = v === 'reset';
+      passEl.required = v !== 'reset';
+      passEl.autocomplete = v === 'up' ? 'new-password' : 'current-password';
+      submitEl.setAttribute('data-i18n', cfg.submit); submitEl.textContent = t(cfg.submit);
+      swapEl.setAttribute('data-i18n', cfg.swap);     swapEl.textContent   = t(cfg.swap);
+      resetEl.hidden = v === 'reset';
+    }
+
+    function open(v){
+      lastFocus = document.activeElement;
+      quiet();
+      setView(v || (auth.user() ? 'acct' : 'in'));
+      backdrop.hidden = false;
+      document.body.style.overflow = 'hidden';
+      (view === 'acct' ? outEl : emailEl).focus();
+    }
+    function close(){
+      backdrop.hidden = true;
+      document.body.style.overflow = '';
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    function working(on){
+      busy = on;
+      submitEl.disabled = on;
+      submitEl.textContent = on ? t('auth_working') : t(VIEWS[view].submit);
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (busy) return;
+      quiet();
+
+      var email = emailEl.value.trim();
+      var pass  = passEl.value;
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ say('auth_need_email', true); emailEl.focus(); return; }
+      if (view !== 'reset' && pass.length < 6){ say('auth_need_pass', true); passEl.focus(); return; }
+
+      working(true);
+
+      var run;
+      if (view === 'in')        run = auth.signIn(email, pass).then(function(){ return { done:'in' }; });
+      else if (view === 'up')   run = auth.signUp(email, pass).then(function(r){ return { done: r.signedIn ? 'in' : 'confirm' }; });
+      else                      run = auth.reset(email).then(function(){ return { done:'reset' }; });
+
+      run.then(function(r){
+        if (r.done === 'in'){
+          form.reset();
+          say('auth_welcome');
+          setView('acct');
+          onSignedInChange();
+        } else if (r.done === 'confirm'){
+          form.reset();
+          say('auth_check_mail');
+        } else {
+          form.reset();
+          say('auth_reset_sent');
+        }
+      })
+      .catch(function(err){
+        var m = (err && err.message || '').toLowerCase();
+        if (/already|exists|registered/.test(m))                     say('auth_exists', true);
+        else if (err && (err.status === 400 || err.status === 401))  say(view === 'in' ? 'auth_bad_login' : 'auth_need_pass', true);
+        else                                                          say('auth_down', true);
+      })
+      .then(function(){ working(false); });
+    });
+
+    swapEl.addEventListener('click', function(){ quiet(); setView(view === 'up' ? 'in' : 'up'); emailEl.focus(); });
+    resetEl.addEventListener('click', function(){ quiet(); setView('reset'); emailEl.focus(); });
+    outEl.addEventListener('click', function(){
+      auth.signOut().then(function(){ favs.forget(); onSignedInChange(); close(); });
+    });
+
+    closeEl.addEventListener('click', close);
+    backdrop.addEventListener('mousedown', function(e){ if (e.target === backdrop) close(); });
+    addEventListener('keydown', function(e){ if (e.key === 'Escape' && !backdrop.hidden) close(); });
+
+    // keep focus inside the dialog while it is open
+    backdrop.addEventListener('keydown', function(e){
+      if (e.key !== 'Tab') return;
+      var f = [].slice.call(backdrop.querySelectorAll('button, input, [href]'))
+                .filter(function(el){ return !el.disabled && el.offsetParent !== null; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    });
+
+    return { open: open, close: close, refresh: function(){ if (!backdrop.hidden) setView(view); } };
+  })();
+
+  /* the header button reflects who is signed in */
+  var acctBtn = document.getElementById('acctBtn');
+  var acctInitial = document.getElementById('acctInitial');
+  var acctBtnMobile = document.getElementById('acctBtnMobile');
+  var invFilter = document.getElementById('invFilter');
+
+  function paintAccount(){
+    var u = auth.user();
+    if (acctBtn){
+      acctBtn.classList.toggle('signed', !!u);
+      acctBtn.setAttribute('aria-label', u ? (u.email || 'Account') : t('auth_open'));
+      if (acctInitial){
+        acctInitial.hidden = !u;
+        acctInitial.textContent = u && u.email ? u.email.charAt(0) : '';
+      }
+    }
+    if (acctBtnMobile){
+      var key = u ? 'auth_t_acct' : 'auth_open';
+      acctBtnMobile.setAttribute('data-i18n', key);
+      acctBtnMobile.textContent = t(key);
+    }
+    if (invFilter){
+      invFilter.hidden = !u;
+      if (!u){ invFilter.setAttribute('aria-pressed', 'false'); }
+    }
+  }
+
+  if (acctBtn) acctBtn.addEventListener('click', function(){ authUI.open(); });
+  if (acctBtnMobile) acctBtnMobile.addEventListener('click', function(){ authUI.open(); });
+
+  /* ---------------- inventory ---------------- */
+  var inventory = (function(){
     var grid = document.getElementById('invGrid');
     var state = document.getElementById('invState');
-    if (!grid || !state) return;
-
-    var SUPABASE_URL = 'https://uampqldgiditxueqmtlj.supabase.co';
-    var SUPABASE_KEY = 'sb_publishable_bieVJhEb2nvn_lHUEb-miw_6HzzMnBK';
+    if (!grid || !state) return { refresh: function(){}, paint: function(){} };
 
     var CAR_SVG = '<svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>';
-
+    var HEART_SVG = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5S3.5 15 3.5 8.9A4.4 4.4 0 0 1 12 6.7a4.4 4.4 0 0 1 8.5 2.2c0 6.1-8.5 11.6-8.5 11.6z"/></svg>';
     var STATUS_KEY = { in_stock:'inv_status_stock', reserved:'inv_status_reserved', sold:'inv_status_sold' };
 
-    function t(key){ return (dict[key] && dict[key][lang]) || ''; }
+    var cars = [];
+    var onlySaved = false;
 
-    // every value below comes from the database, so it goes in as text, never markup
+    // every value here comes from the database, so it goes in as text, never markup
     function el(tag, cls, text){
       var n = document.createElement(tag);
       if (cls) n.className = cls;
@@ -1836,8 +2335,37 @@
       ].filter(Boolean).join(' · ');
     }
 
+    function heartFor(car){
+      var b = el('button', 'inv-fav');
+      b.type = 'button';
+      b.innerHTML = HEART_SVG;
+      b.dataset.car = car.id;
+      paintHeart(b);
+      b.addEventListener('click', function(){
+        if (!auth.user()){ authUI.open('in'); return; }
+        if (b.disabled) return;
+        var saved = favs.has(car.id);
+        b.disabled = true;
+        (saved ? favs.remove(car.id) : favs.add(car.id))
+          .then(function(){ paintHeart(b); if (onlySaved) applyFilter(); })
+          .catch(function(){})
+          .then(function(){ b.disabled = false; });
+      });
+      return b;
+    }
+
+    function paintHeart(b){
+      var on = favs.has(b.dataset.car);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var key = on ? 'fav_remove' : 'fav_add';
+      b.setAttribute('data-i18n-label', key);
+      b.setAttribute('aria-label', t(key));
+      b.title = t(key);
+    }
+
     function buildCard(car){
       var card = el('article', 'inv-card');
+      card.dataset.car = car.id;
 
       var photo = el('div', 'inv-photo');
       if (car.photo_url){
@@ -1853,6 +2381,8 @@
         photo.appendChild(soon);
       }
 
+      photo.appendChild(heartFor(car));
+
       var key = STATUS_KEY[car.status] || 'inv_status_stock';
       var badge = el('span', 'inv-status' + (car.status === 'sold' ? ' sold' : ''), t(key));
       badge.setAttribute('data-i18n', key);
@@ -1864,7 +2394,7 @@
 
       if (car.price_usd != null){
         var price = el('div', 'inv-price', fmt(+car.price_usd, cur));
-        price.dataset.usd = car.price_usd;   // paintMoney() repaints these on toggle
+        price.dataset.usd = car.price_usd;      // paintMoney() repaints these
         body.appendChild(price);
       }
 
@@ -1879,34 +2409,75 @@
       return card;
     }
 
-    function say(key){
+    function message(key){
       state.hidden = false;
       state.setAttribute('data-i18n', key);
       state.textContent = t(key);
     }
 
-    fetch(SUPABASE_URL + '/rest/v1/cars'
-          + '?select=make,model,year,price_usd,fuel,transmission,mileage,status,photo_url'
-          + '&published=eq.true&order=created_at.desc', {
-      // apikey only. A publishable key sent as "Authorization: Bearer" is parsed as
-      // a JWT and rejected with "Invalid JWT" - the header many Supabase clients add
-      // by default is exactly the thing that breaks these newer keys.
-      headers: { apikey: SUPABASE_KEY }
-    })
-    .then(function(r){
-      if (!r.ok) throw new Error('inventory request failed: ' + r.status);
-      return r.json();
-    })
-    .then(function(cars){
-      if (!Array.isArray(cars) || !cars.length){ say('inv_empty'); return; }
+    function applyFilter(){
+      var shown = 0;
+      [].forEach.call(grid.children, function(card){
+        var keep = !onlySaved || favs.has(card.dataset.car);
+        card.hidden = !keep;
+        if (keep) shown++;
+      });
+      if (!shown) message(onlySaved ? 'inv_none_saved' : 'inv_empty');
+      else state.hidden = true;
+    }
+
+    function draw(){
+      grid.textContent = '';
       var frag = document.createDocumentFragment();
       cars.forEach(function(c){ frag.appendChild(buildCard(c)); });
       grid.appendChild(frag);
-      state.hidden = true;
       initSpotlightCards(grid.querySelectorAll('.inv-card'));
-    })
-    .catch(function(){ say('inv_error'); });
+      applyFilter();
+    }
+
+    if (invFilter){
+      invFilter.addEventListener('click', function(){
+        onlySaved = invFilter.getAttribute('aria-pressed') !== 'true';
+        invFilter.setAttribute('aria-pressed', onlySaved ? 'true' : 'false');
+        applyFilter();
+      });
+    }
+
+    fetch(SUPABASE_URL + '/rest/v1/cars'
+          + '?select=id,make,model,year,price_usd,fuel,transmission,mileage,status,photo_url'
+          + '&published=eq.true&order=created_at.desc', { headers: anonHeaders() })
+      .then(function(r){
+        if (!r.ok) throw new Error('inventory request failed: ' + r.status);
+        return r.json();
+      })
+      .then(function(rows){
+        if (!Array.isArray(rows) || !rows.length){ message('inv_empty'); return; }
+        cars = rows;
+        draw();
+      })
+      .catch(function(){ message('inv_error'); });
+
+    return {
+      // hearts and the filter depend on who is signed in, so both are repainted
+      // whenever that changes rather than reloading the cars
+      paint: function(){
+        [].forEach.call(grid.querySelectorAll('.inv-fav'), paintHeart);
+        if (!auth.user()) onlySaved = false;
+        applyFilter();
+      }
+    };
   })();
+
+  function onSignedInChange(){
+    paintAccount();
+    authUI.refresh();
+    favs.load()
+      .catch(function(){})
+      .then(function(){ inventory.paint(); });
+  }
+
+  auth.onChange(function(){ paintAccount(); });
+  onSignedInChange();
 
   applyLang('en');
   layoutJourney();
