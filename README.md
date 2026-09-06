@@ -5,8 +5,9 @@ pedidos especiales de vehículos: el cliente dice qué auto quiere, año y presu
 y la empresa lo busca en subastas y redes de distribuidores de Japón, Europa y
 Norteamérica, y lo entrega en Jamaica.
 
-No es un concesionario con inventario en piso, así que el sitio está construido
-alrededor de la solicitud de búsqueda, no de una parrilla de autos en stock.
+Además del pedido especial, el negocio ahora también va a tener un pequeño inventario
+propio de autos ya en Jamaica, listos para venta inmediata — el sitio está creciendo
+para cubrir ambos caminos: "búscamelo" y "cómpralo ya".
 
 ## Estructura
 
@@ -33,6 +34,9 @@ son las tipografías de Google Fonts (Archivo y Plus Jakarta Sans).
 - **Globo 3D interactivo** (canvas, arrastrable, con inercia) que muestra las rutas
   de búsqueda mundial convergiendo en Kingston
 - **Proceso de 4 pasos** en scroll horizontal en escritorio, apilado en móvil
+- **Inventario** (`#inventario`): parrilla de autos en stock con foto, specs, precio y
+  estado (disponible/vendido). Hoy son 6 autos de muestra, sin conexión a datos reales
+  todavía — ver "Próxima fase" abajo
 - **Formulario de solicitud**: marca, modelo, año y presupuesto
 - **Sección de depósito** con tres vías de pago y conversor de moneda
 - **Bilingüe** inglés / español, y **modo día / noche** que respeta el ajuste del
@@ -54,6 +58,27 @@ npx netlify deploy --prod --dir=dist --site=46601eab-8855-4222-908e-d35dd1277a29
 O manualmente: arrastrar el contenido de `dist/` a la zona de despliegue en
 https://app.netlify.com/projects/total-trading-limited/deploys
 
+## Próxima fase: cuentas de cliente, inventario real y pago en línea
+
+El cliente pidió tres cosas nuevas: login para clientes, inventario con fotos reales,
+y pago en línea. Ninguna de las tres se puede hacer con un sitio estático — necesitan
+base de datos y autenticación de verdad. Se van a construir en este orden, porque cada
+una depende de la anterior:
+
+1. **Inventario navegable** (en progreso) — hoy son autos de muestra en HTML fijo.
+   El siguiente paso es conectar la parrilla a una base de datos real (propuesta:
+   Supabase — plan gratis, incluye base de datos + login + almacenamiento de fotos)
+   para que el inventario se pueda actualizar sin tocar código.
+2. **Cuentas de cliente** — login/registro real con recuperación de contraseña,
+   usando el mismo Supabase.
+3. **Pago en línea** — bloqueado hasta decidir con el cliente qué procesador va a
+   usar en Jamaica (WiPay, First Atlantic Commerce, Stripe, PayPal Business…). Sin
+   cuenta de comercio no hay nada real que conectar.
+
+Para arrancar la fase 2 en serio hace falta que el dueño del negocio cree una cuenta
+gratuita en Supabase (igual que con Netlify) y comparta la URL del proyecto y la llave
+pública — son datos seguros de exponer, no son credenciales secretas.
+
 ## Pendiente antes de salir a producción
 
 Esto es una **vista previa de diseño**. La página lo dice abiertamente en varios
@@ -74,3 +99,8 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
       suave. Una versión horizontal mejoraría bastante.
 - [ ] **Fotos propias** — la portada usa una imagen de referencia; conviene sustituirla
       por fotos de entregas reales con derechos de la empresa.
+- [ ] **Inventario real** — los 6 autos en `#inventario` son de muestra (ficticios,
+      con ícono en vez de foto). Falta conectar a Supabase (o similar) y cargar los
+      autos, fotos y precios reales del negocio. Ver "Próxima fase" arriba.
+- [ ] **Login de clientes y pago en línea** — todavía no existen; dependen de que se
+      cree la cuenta de Supabase y se decida el procesador de pago. Ver "Próxima fase".

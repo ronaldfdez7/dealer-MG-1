@@ -462,6 +462,50 @@
   }
   .budget-hint{ display:block; margin-top:8px; font-size:0.76rem; color:var(--accent); font-weight:700; min-height:1em; }
 
+  /* ============ INVENTORY ============ */
+  .inv-head{ max-width:640px; }
+  .inv-lead{ margin-top:16px; color:var(--muted); line-height:1.8; font-size:1.02rem; }
+  .inv-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:44px; }
+  @media (max-width:980px){ .inv-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:620px){ .inv-grid{ grid-template-columns:1fr; } }
+  .inv-card{
+    position:relative; overflow:hidden; border:1px solid var(--line); border-radius:16px;
+    background:var(--surface); display:flex; flex-direction:column;
+    transition:border-color .3s ease, transform .3s var(--ease);
+  }
+  .inv-card:hover{ border-color:var(--accent); transform:translateY(-4px); }
+  .inv-card::after{
+    content:''; position:absolute; inset:0; pointer-events:none; opacity:0; z-index:1;
+    background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%), var(--accent-soft), transparent 65%);
+    transition:opacity .35s ease;
+  }
+  .inv-card:hover::after{ opacity:1; }
+  .inv-photo{
+    position:relative; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg, var(--accent-soft), var(--surface) 70%); color:var(--accent);
+    border-bottom:1px solid var(--line);
+  }
+  .inv-photo svg{ width:58%; height:auto; opacity:0.55; }
+  .inv-photo-note{
+    position:absolute; bottom:10px; left:10px; font-size:0.62rem; font-weight:700; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--muted); background:var(--bg); border:1px solid var(--line);
+    border-radius:999px; padding:4px 10px;
+  }
+  .inv-status{
+    position:absolute; top:12px; right:12px; font-size:0.62rem; font-weight:800; letter-spacing:0.1em;
+    text-transform:uppercase; padding:6px 12px; border-radius:999px; background:var(--bg); border:1px solid var(--accent); color:var(--accent);
+  }
+  .inv-status.sold{ border-color:var(--line); color:var(--muted); }
+  .inv-body{ position:relative; z-index:2; padding:22px 22px 24px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .inv-body h3{ font-size:1.08rem; letter-spacing:0.01em; }
+  .inv-specs{ color:var(--muted); font-size:0.83rem; }
+  .inv-price{ font-weight:800; font-size:1.2rem; color:var(--accent); margin:6px 0 14px; }
+  .inv-body .btn{ margin-top:auto; }
+  .inv-note{
+    margin-top:30px; padding:16px 20px; border:1px dashed var(--line); border-radius:12px;
+    color:var(--muted); font-size:0.82rem; line-height:1.7;
+  }
+
   /* ============ REQUEST ============ */
   .request-grid{ display:grid; grid-template-columns:1fr 1fr; border-radius:20px; overflow:hidden; border:1px solid var(--line); background:var(--surface); }
   @media (max-width:900px){ .request-grid{ grid-template-columns:1fr; } }
@@ -679,6 +723,7 @@
     </a>
     <div class="navlinks">
       <a href="#promesa" data-i18n="nav_how">How it works</a>
+      <a href="#inventario" data-i18n="nav_inventory">Inventory</a>
       <a href="#mundo" data-i18n="nav_world">Worldwide</a>
       <a href="#solicitar" data-i18n="nav_request">Request a car</a>
       <a href="#pago" data-i18n="nav_pay">Deposit</a>
@@ -714,6 +759,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="#promesa" data-i18n="nav_how">How it works</a>
+  <a href="#inventario" data-i18n="nav_inventory">Inventory</a>
   <a href="#mundo" data-i18n="nav_world">Worldwide</a>
   <a href="#solicitar" data-i18n="nav_request">Request a car</a>
   <a href="#pago" data-i18n="nav_pay">Deposit</a>
@@ -775,6 +821,96 @@
     <div class="sub" data-i18n="band_2">We make it happen.</div>
   </div>
 </div>
+
+<section id="inventario">
+  <div class="wrap">
+    <div class="inv-head reveal">
+      <h2 class="chrome" data-i18n="inv_title">Ready to drive today</h2>
+      <p class="inv-lead" data-i18n="inv_lead">A small, changing selection of vehicles already in Jamaica, inspected and ready for immediate sale &mdash; no waiting on a search.</p>
+    </div>
+    <div class="inv-grid reveal">
+      <article class="inv-card">
+        <div class="inv-photo">
+          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
+          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
+          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
+        </div>
+        <div class="inv-body">
+          <h3>2019 Toyota Land Cruiser</h3>
+          <p class="inv-specs">Diesel &middot; Automatic &middot; 42,000 mi</p>
+          <div class="inv-price">US$28,500</div>
+          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
+        </div>
+      </article>
+      <article class="inv-card">
+        <div class="inv-photo">
+          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
+          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
+          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
+        </div>
+        <div class="inv-body">
+          <h3>2021 BMW X5 xDrive40i</h3>
+          <p class="inv-specs">Petrol &middot; Automatic &middot; 18,000 mi</p>
+          <div class="inv-price">US$46,900</div>
+          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
+        </div>
+      </article>
+      <article class="inv-card">
+        <div class="inv-photo">
+          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
+          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
+          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
+        </div>
+        <div class="inv-body">
+          <h3>2018 Honda CR-V EX</h3>
+          <p class="inv-specs">Petrol &middot; Automatic &middot; 55,000 mi</p>
+          <div class="inv-price">US$16,200</div>
+          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
+        </div>
+      </article>
+      <article class="inv-card">
+        <div class="inv-photo">
+          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
+          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
+          <span class="inv-status sold" data-i18n="inv_status_sold">Sold</span>
+        </div>
+        <div class="inv-body">
+          <h3>2020 Mercedes-Benz C300</h3>
+          <p class="inv-specs">Petrol &middot; Automatic &middot; 29,500 mi</p>
+          <div class="inv-price">US$27,800</div>
+          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
+        </div>
+      </article>
+      <article class="inv-card">
+        <div class="inv-photo">
+          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
+          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
+          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
+        </div>
+        <div class="inv-body">
+          <h3>2022 Ford F-150 XLT</h3>
+          <p class="inv-specs">Petrol &middot; Automatic &middot; 9,800 mi</p>
+          <div class="inv-price">US$41,300</div>
+          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
+        </div>
+      </article>
+      <article class="inv-card">
+        <div class="inv-photo">
+          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
+          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
+          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
+        </div>
+        <div class="inv-body">
+          <h3>2017 Nissan X-Trail</h3>
+          <p class="inv-specs">Petrol &middot; Automatic &middot; 61,000 mi</p>
+          <div class="inv-price">US$13,900</div>
+          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
+        </div>
+      </article>
+    </div>
+    <p class="inv-note reveal" data-i18n="inv_note">Sample listings shown while the real inventory photos and prices are being added &mdash; nothing here is for sale yet.</p>
+  </div>
+</section>
 
 <section class="world" id="mundo">
   <div class="wrap">
@@ -974,6 +1110,7 @@
         <h5 data-i18n="foot_nav">Navigation</h5>
         <ul>
           <li><a href="#promesa" data-i18n="nav_how">How it works</a></li>
+          <li><a href="#inventario" data-i18n="nav_inventory">Inventory</a></li>
           <li><a href="#mundo" data-i18n="nav_world">Worldwide</a></li>
           <li><a href="#solicitar" data-i18n="nav_request">Request a car</a></li>
           <li><a href="#contacto" data-i18n="nav_contact">Contact</a></li>
@@ -1005,7 +1142,8 @@
 
   /* ---------------- i18n ---------------- */
   var dict = {
-    nav_how:{en:'How it works',es:'Cómo funciona'}, nav_world:{en:'Worldwide',es:'Alcance mundial'},
+    nav_how:{en:'How it works',es:'Cómo funciona'}, nav_inventory:{en:'Inventory',es:'Inventario'},
+    nav_world:{en:'Worldwide',es:'Alcance mundial'},
     nav_request:{en:'Request a car',es:'Solicita tu auto'}, nav_contact:{en:'Contact',es:'Contacto'},
     nav_cta:{en:'Request a car',es:'Solicita tu auto'},
     hero_title:{
@@ -1021,6 +1159,15 @@
               es:'Buscamos las mejores opciones en todo el mundo y te conseguimos el <strong>mejor precio posible</strong> &mdash; y luego nos encargamos del papeleo, el envío y la entrega, hasta tus manos.'},
     band_1:{en:'Your car. Your way. Your budget.',es:'Tu auto. A tu manera. Tu presupuesto.'},
     band_2:{en:'We make it happen.',es:'Nosotros lo hacemos realidad.'},
+    inv_title:{en:'Ready to drive today',es:'Listos para manejar hoy'},
+    inv_lead:{en:'A small, changing selection of vehicles already in Jamaica, inspected and ready for immediate sale &mdash; no waiting on a search.',
+               es:'Una selección pequeña y cambiante de vehículos ya en Jamaica, inspeccionados y listos para la venta inmediata &mdash; sin esperar una búsqueda.'},
+    inv_cta:{en:'Ask about this car',es:'Preguntar por este auto'},
+    inv_photo_soon:{en:'Photo coming soon',es:'Foto próximamente'},
+    inv_status_stock:{en:'In stock',es:'Disponible'},
+    inv_status_sold:{en:'Sold',es:'Vendido'},
+    inv_note:{en:'Sample listings shown while the real inventory photos and prices are being added &mdash; nothing here is for sale yet.',
+              es:'Autos de muestra mientras se cargan las fotos y precios reales del inventario &mdash; todavía nada aquí está a la venta.'},
     w_title:{en:'We search the whole world for it',es:'Lo buscamos en todo el mundo'},
     w_lead:{en:"Japan, Germany, the UK, the United States. We work the auctions and the dealer networks other buyers can't reach &mdash; then land the car in Jamaica, cleared and ready.",
             es:'Japón, Alemania, Reino Unido, Estados Unidos. Trabajamos las subastas y las redes de distribuidores que otros compradores no alcanzan &mdash; y traemos el auto hasta Jamaica, despachado y listo.'},
@@ -1704,7 +1851,7 @@
 
   function initSpotlightCards(){
     if (reduce || !matchMedia('(pointer:fine)').matches) return;
-    var els = document.querySelectorAll('.stepcard, .pay-card');
+    var els = document.querySelectorAll('.stepcard, .pay-card, .inv-card');
     els.forEach(function(el){
       el.addEventListener('pointermove', function(e){
         var r = el.getBoundingClientRect();
