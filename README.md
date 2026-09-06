@@ -35,8 +35,8 @@ son las tipografías de Google Fonts (Archivo y Plus Jakarta Sans).
   de búsqueda mundial convergiendo en Kingston
 - **Proceso de 4 pasos** en scroll horizontal en escritorio, apilado en móvil
 - **Inventario** (`#inventario`): parrilla de autos en stock con foto, specs, precio y
-  estado (disponible/vendido). Hoy son 6 autos de muestra, sin conexión a datos reales
-  todavía — ver "Próxima fase" abajo
+  estado, **leída en vivo desde la base de datos** (Supabase). Los precios siguen el
+  selector USD/JMD igual que la sección de depósito
 - **Formulario de solicitud**: marca, modelo, año y presupuesto
 - **Sección de depósito** con tres vías de pago y conversor de moneda
 - **Bilingüe** inglés / español, y **modo día / noche** que respeta el ajuste del
@@ -58,26 +58,53 @@ npx netlify deploy --prod --dir=dist --site=46601eab-8855-4222-908e-d35dd1277a29
 O manualmente: arrastrar el contenido de `dist/` a la zona de despliegue en
 https://app.netlify.com/projects/total-trading-limited/deploys
 
-## Próxima fase: cuentas de cliente, inventario real y pago en línea
+## Base de datos (Supabase)
 
-El cliente pidió tres cosas nuevas: login para clientes, inventario con fotos reales,
-y pago en línea. Ninguna de las tres se puede hacer con un sitio estático — necesitan
-base de datos y autenticación de verdad. Se van a construir en este orden, porque cada
-una depende de la anterior:
+Proyecto: `ronaldfdez Dealer MJ` → https://uampqldgiditxueqmtlj.supabase.co
 
-1. **Inventario navegable** (en progreso) — hoy son autos de muestra en HTML fijo.
-   El siguiente paso es conectar la parrilla a una base de datos real (propuesta:
-   Supabase — plan gratis, incluye base de datos + login + almacenamiento de fotos)
-   para que el inventario se pueda actualizar sin tocar código.
-2. **Cuentas de cliente** — login/registro real con recuperación de contraseña,
-   usando el mismo Supabase.
-3. **Pago en línea** — bloqueado hasta decidir con el cliente qué procesador va a
-   usar en Jamaica (WiPay, First Atlantic Commerce, Stripe, PayPal Business…). Sin
-   cuenta de comercio no hay nada real que conectar.
+### Cómo agregar o editar autos (sin tocar código)
 
-Para arrancar la fase 2 en serio hace falta que el dueño del negocio cree una cuenta
-gratuita en Supabase (igual que con Netlify) y comparta la URL del proyecto y la llave
-pública — son datos seguros de exponer, no son credenciales secretas.
+1. Entra a https://supabase.com → tu proyecto → **Table Editor** → tabla `cars`.
+2. **Insert row** y llena los campos:
+
+   | Campo | Qué poner |
+   |---|---|
+   | `make` | Marca: Toyota, BMW… (obligatorio) |
+   | `model` | Modelo: Land Cruiser, X5… (obligatorio) |
+   | `year` | Año (obligatorio) |
+   | `price_usd` | Precio **en dólares**. El sitio convierte solo a JMD |
+   | `fuel` | Petrol, Diesel, Hybrid… |
+   | `transmission` | Automatic / Manual |
+   | `mileage` | Millaje, solo el número |
+   | `status` | `in_stock`, `reserved` o `sold` |
+   | `photo_url` | Enlace a la foto. Si se deja vacío sale un ícono con "Foto próximamente" |
+   | `published` | **Déjalo en `false` mientras lo preparas.** Ponlo en `true` para que aparezca en el sitio |
+
+3. Los cambios salen en la web al recargar la página. No hay que desplegar nada.
+
+**`published` es el interruptor de publicación**: un auto con `published = false` es
+invisible para el sitio, aunque exista en la tabla. Sirve para preparar una ficha con
+calma sin que salga a medio llenar.
+
+### Seguridad
+
+La llave que va en `dist/index.html` es la **llave publicable**, hecha para ser pública.
+Lo que realmente protege los datos es el row-level security de la tabla: con esa llave
+solo se pueden **leer** los autos publicados. Insertar, modificar y borrar están
+prohibidos — comprobado con pruebas contra la base. Editar solo se puede desde el panel
+de Supabase, con la cuenta del dueño.
+
+> La llave `service_role` / `sb_secret_...` **nunca** debe ir en el sitio ni compartirse.
+
+## Próxima fase: cuentas de cliente y pago en línea
+
+1. ~~Inventario navegable conectado a base de datos~~ — **hecho**.
+2. **Cuentas de cliente** — login/registro con recuperación de contraseña, usando la
+   autenticación que ya viene incluida en este mismo proyecto de Supabase.
+3. **Pago en línea** — bloqueado hasta decidir con el cliente qué procesador va a usar
+   en Jamaica (WiPay, First Atlantic Commerce, Stripe, PayPal Business…). Sin cuenta de
+   comercio no hay nada real que conectar. Cuando exista, el cobro debe autorizarse en
+   un servidor (Netlify Functions), nunca desde el navegador.
 
 ## Pendiente antes de salir a producción
 
@@ -99,8 +126,9 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
       suave. Una versión horizontal mejoraría bastante.
 - [ ] **Fotos propias** — la portada usa una imagen de referencia; conviene sustituirla
       por fotos de entregas reales con derechos de la empresa.
-- [ ] **Inventario real** — los 6 autos en `#inventario` son de muestra (ficticios,
-      con ícono en vez de foto). Falta conectar a Supabase (o similar) y cargar los
-      autos, fotos y precios reales del negocio. Ver "Próxima fase" arriba.
-- [ ] **Login de clientes y pago en línea** — todavía no existen; dependen de que se
-      cree la cuenta de Supabase y se decida el procesador de pago. Ver "Próxima fase".
+- [ ] **Autos reales en el inventario** — la conexión a la base ya funciona, pero los
+      6 autos cargados son ficticios y sin foto. Falta que el negocio cargue los autos
+      reales (ver "Cómo agregar o editar autos" arriba) y borre los de muestra. El
+      aviso de "autos de muestra" bajo la parrilla debe quitarse en ese momento.
+- [ ] **Login de clientes y pago en línea** — todavía no existen; el pago depende de
+      que se decida el procesador. Ver "Próxima fase".

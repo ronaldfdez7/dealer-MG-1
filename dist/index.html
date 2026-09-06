@@ -486,6 +486,8 @@
     border-bottom:1px solid var(--line);
   }
   .inv-photo svg{ width:58%; height:auto; opacity:0.55; }
+  .inv-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .inv-state{ margin-top:36px; text-align:center; color:var(--muted); font-size:0.92rem; line-height:1.7; }
   .inv-photo-note{
     position:absolute; bottom:10px; left:10px; font-size:0.62rem; font-weight:700; letter-spacing:0.08em;
     text-transform:uppercase; color:var(--muted); background:var(--bg); border:1px solid var(--line);
@@ -828,86 +830,8 @@
       <h2 class="chrome" data-i18n="inv_title">Ready to drive today</h2>
       <p class="inv-lead" data-i18n="inv_lead">A small, changing selection of vehicles already in Jamaica, inspected and ready for immediate sale &mdash; no waiting on a search.</p>
     </div>
-    <div class="inv-grid reveal">
-      <article class="inv-card">
-        <div class="inv-photo">
-          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
-          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
-          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
-        </div>
-        <div class="inv-body">
-          <h3>2019 Toyota Land Cruiser</h3>
-          <p class="inv-specs">Diesel &middot; Automatic &middot; 42,000 mi</p>
-          <div class="inv-price">US$28,500</div>
-          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
-        </div>
-      </article>
-      <article class="inv-card">
-        <div class="inv-photo">
-          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
-          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
-          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
-        </div>
-        <div class="inv-body">
-          <h3>2021 BMW X5 xDrive40i</h3>
-          <p class="inv-specs">Petrol &middot; Automatic &middot; 18,000 mi</p>
-          <div class="inv-price">US$46,900</div>
-          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
-        </div>
-      </article>
-      <article class="inv-card">
-        <div class="inv-photo">
-          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
-          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
-          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
-        </div>
-        <div class="inv-body">
-          <h3>2018 Honda CR-V EX</h3>
-          <p class="inv-specs">Petrol &middot; Automatic &middot; 55,000 mi</p>
-          <div class="inv-price">US$16,200</div>
-          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
-        </div>
-      </article>
-      <article class="inv-card">
-        <div class="inv-photo">
-          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
-          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
-          <span class="inv-status sold" data-i18n="inv_status_sold">Sold</span>
-        </div>
-        <div class="inv-body">
-          <h3>2020 Mercedes-Benz C300</h3>
-          <p class="inv-specs">Petrol &middot; Automatic &middot; 29,500 mi</p>
-          <div class="inv-price">US$27,800</div>
-          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
-        </div>
-      </article>
-      <article class="inv-card">
-        <div class="inv-photo">
-          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
-          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
-          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
-        </div>
-        <div class="inv-body">
-          <h3>2022 Ford F-150 XLT</h3>
-          <p class="inv-specs">Petrol &middot; Automatic &middot; 9,800 mi</p>
-          <div class="inv-price">US$41,300</div>
-          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
-        </div>
-      </article>
-      <article class="inv-card">
-        <div class="inv-photo">
-          <svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>
-          <span class="inv-photo-note" data-i18n="inv_photo_soon">Photo coming soon</span>
-          <span class="inv-status" data-i18n="inv_status_stock">In stock</span>
-        </div>
-        <div class="inv-body">
-          <h3>2017 Nissan X-Trail</h3>
-          <p class="inv-specs">Petrol &middot; Automatic &middot; 61,000 mi</p>
-          <div class="inv-price">US$13,900</div>
-          <button class="btn btn-ghost btn-block" data-scroll="#contacto" data-i18n="inv_cta">Ask about this car</button>
-        </div>
-      </article>
-    </div>
+    <div class="inv-grid reveal" id="invGrid"></div>
+    <p class="inv-state" id="invState" data-i18n="inv_loading">Loading the inventory&hellip;</p>
     <p class="inv-note reveal" data-i18n="inv_note">Sample listings shown while the real inventory photos and prices are being added &mdash; nothing here is for sale yet.</p>
   </div>
 </section>
@@ -1165,7 +1089,13 @@
     inv_cta:{en:'Ask about this car',es:'Preguntar por este auto'},
     inv_photo_soon:{en:'Photo coming soon',es:'Foto próximamente'},
     inv_status_stock:{en:'In stock',es:'Disponible'},
+    inv_status_reserved:{en:'Reserved',es:'Reservado'},
     inv_status_sold:{en:'Sold',es:'Vendido'},
+    inv_loading:{en:'Loading the inventory&hellip;',es:'Cargando el inventario&hellip;'},
+    inv_empty:{en:'No vehicles in stock at the moment. Tell us what you are after and we will source it for you.',
+               es:'No hay vehículos en stock por ahora. Dinos qué buscas y lo conseguimos para ti.'},
+    inv_error:{en:"The inventory couldn't be loaded just now. Please refresh the page, or contact us and we'll tell you what's available.",
+               es:'No se pudo cargar el inventario en este momento. Recarga la página, o contáctanos y te decimos qué hay disponible.'},
     inv_note:{en:'Sample listings shown while the real inventory photos and prices are being added &mdash; nothing here is for sale yet.',
               es:'Autos de muestra mientras se cargan las fotos y precios reales del inventario &mdash; todavía nada aquí está a la venta.'},
     w_title:{en:'We search the whole world for it',es:'Lo buscamos en todo el mundo'},
@@ -1264,6 +1194,10 @@
     });
     document.querySelectorAll('.cur-toggle button').forEach(function(b){
       b.classList.toggle('active', b.dataset.cur === cur);
+    });
+    // inventory prices follow the same toggle as the deposit amounts
+    document.querySelectorAll('.inv-price[data-usd]').forEach(function(el){
+      el.textContent = fmt(+el.dataset.usd, cur);
     });
     paintBudgetHint();
   }
@@ -1849,9 +1783,11 @@
     });
   }
 
-  function initSpotlightCards(){
+  // takes an explicit list so inventory cards can be wired up after they are
+  // fetched and rendered, not only the ones present at startup
+  function initSpotlightCards(els){
     if (reduce || !matchMedia('(pointer:fine)').matches) return;
-    var els = document.querySelectorAll('.stepcard, .pay-card, .inv-card');
+    els = els || document.querySelectorAll('.stepcard, .pay-card');
     els.forEach(function(el){
       el.addEventListener('pointermove', function(e){
         var r = el.getBoundingClientRect();
@@ -1863,6 +1799,114 @@
 
   initMagneticButtons();
   initSpotlightCards();
+
+  /* ---------------- inventory, read from the database ----------------
+     Reads straight from PostgREST with fetch - no client library needed for one
+     query. The key below is the project's publishable key: it is meant to ship in
+     public code. What actually guards the data is row-level security on the table,
+     which allows exactly one thing with this key - reading rows marked published.
+     Inserts, updates and deletes are all refused. */
+  (function(){
+    var grid = document.getElementById('invGrid');
+    var state = document.getElementById('invState');
+    if (!grid || !state) return;
+
+    var SUPABASE_URL = 'https://uampqldgiditxueqmtlj.supabase.co';
+    var SUPABASE_KEY = 'sb_publishable_bieVJhEb2nvn_lHUEb-miw_6HzzMnBK';
+
+    var CAR_SVG = '<svg viewBox="0 0 64 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24 L9 14 Q11 10 16 10 H44 Q49 10 51 14 L57 22"/><path d="M2 24 H60 M2 24 V20 Q2 18 4 18 H58 Q60 18 60 20 V24"/><circle cx="16" cy="27" r="4.5"/><circle cx="46" cy="27" r="4.5"/><path d="M20 10 L22 18 M38 10 L38 18"/></svg>';
+
+    var STATUS_KEY = { in_stock:'inv_status_stock', reserved:'inv_status_reserved', sold:'inv_status_sold' };
+
+    function t(key){ return (dict[key] && dict[key][lang]) || ''; }
+
+    // every value below comes from the database, so it goes in as text, never markup
+    function el(tag, cls, text){
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text !== undefined) n.textContent = text;
+      return n;
+    }
+
+    function specLine(car){
+      return [
+        car.fuel,
+        car.transmission,
+        car.mileage != null ? car.mileage.toLocaleString('en-US') + ' mi' : null
+      ].filter(Boolean).join(' · ');
+    }
+
+    function buildCard(car){
+      var card = el('article', 'inv-card');
+
+      var photo = el('div', 'inv-photo');
+      if (car.photo_url){
+        var img = document.createElement('img');
+        img.src = car.photo_url;
+        img.alt = [car.year, car.make, car.model].filter(Boolean).join(' ');
+        img.loading = 'lazy';
+        photo.appendChild(img);
+      } else {
+        photo.innerHTML = CAR_SVG;
+        var soon = el('span', 'inv-photo-note', t('inv_photo_soon'));
+        soon.setAttribute('data-i18n', 'inv_photo_soon');
+        photo.appendChild(soon);
+      }
+
+      var key = STATUS_KEY[car.status] || 'inv_status_stock';
+      var badge = el('span', 'inv-status' + (car.status === 'sold' ? ' sold' : ''), t(key));
+      badge.setAttribute('data-i18n', key);
+      photo.appendChild(badge);
+
+      var body = el('div', 'inv-body');
+      body.appendChild(el('h3', null, [car.year, car.make, car.model].filter(Boolean).join(' ')));
+      body.appendChild(el('p', 'inv-specs', specLine(car)));
+
+      if (car.price_usd != null){
+        var price = el('div', 'inv-price', fmt(+car.price_usd, cur));
+        price.dataset.usd = car.price_usd;   // paintMoney() repaints these on toggle
+        body.appendChild(price);
+      }
+
+      var cta = el('button', 'btn btn-ghost btn-block', t('inv_cta'));
+      cta.type = 'button';
+      cta.setAttribute('data-i18n', 'inv_cta');
+      cta.setAttribute('data-scroll', '#contacto');
+      body.appendChild(cta);
+
+      card.appendChild(photo);
+      card.appendChild(body);
+      return card;
+    }
+
+    function say(key){
+      state.hidden = false;
+      state.setAttribute('data-i18n', key);
+      state.textContent = t(key);
+    }
+
+    fetch(SUPABASE_URL + '/rest/v1/cars'
+          + '?select=make,model,year,price_usd,fuel,transmission,mileage,status,photo_url'
+          + '&published=eq.true&order=created_at.desc', {
+      // apikey only. A publishable key sent as "Authorization: Bearer" is parsed as
+      // a JWT and rejected with "Invalid JWT" - the header many Supabase clients add
+      // by default is exactly the thing that breaks these newer keys.
+      headers: { apikey: SUPABASE_KEY }
+    })
+    .then(function(r){
+      if (!r.ok) throw new Error('inventory request failed: ' + r.status);
+      return r.json();
+    })
+    .then(function(cars){
+      if (!Array.isArray(cars) || !cars.length){ say('inv_empty'); return; }
+      var frag = document.createDocumentFragment();
+      cars.forEach(function(c){ frag.appendChild(buildCard(c)); });
+      grid.appendChild(frag);
+      state.hidden = true;
+      initSpotlightCards(grid.querySelectorAll('.inv-card'));
+    })
+    .catch(function(){ say('inv_error'); });
+  })();
 
   applyLang('en');
   layoutJourney();
