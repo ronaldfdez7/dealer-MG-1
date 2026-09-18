@@ -2331,7 +2331,13 @@
       return [
         car.fuel,
         car.transmission,
-        car.mileage != null ? car.mileage.toLocaleString('en-US') + ' mi' : null
+        car.drivetrain,
+        // the unit comes from the row: these are Japanese and European imports sold
+        // in Jamaica, so odometers are in km - printing "mi" against a km figure
+        // understates the distance by roughly 40% to anyone reading the listing
+        car.mileage != null
+          ? car.mileage.toLocaleString('en-US') + ' ' + (car.mileage_unit || 'km')
+          : null
       ].filter(Boolean).join(' · ');
     }
 
@@ -2444,7 +2450,7 @@
     }
 
     fetch(SUPABASE_URL + '/rest/v1/cars'
-          + '?select=id,make,model,year,price_usd,fuel,transmission,mileage,status,photo_url'
+          + '?select=id,make,model,year,price_usd,fuel,transmission,drivetrain,mileage,mileage_unit,status,photo_url'
           + '&published=eq.true&order=created_at.desc', { headers: anonHeaders() })
       .then(function(r){
         if (!r.ok) throw new Error('inventory request failed: ' + r.status);

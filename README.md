@@ -79,7 +79,9 @@ Proyecto: `ronaldfdez Dealer MJ` → https://uampqldgiditxueqmtlj.supabase.co
    | `price_usd` | Precio **en dólares**. El sitio convierte solo a JMD |
    | `fuel` | Petrol, Diesel, Hybrid… |
    | `transmission` | Automatic / Manual |
-   | `mileage` | Millaje, solo el número |
+   | `drivetrain` | 4WD, AWD, 2WD… |
+   | `mileage` | Kilometraje, solo el número |
+   | `mileage_unit` | `km` por defecto. Solo ponlo en `mi` si el odómetro viene en millas |
    | `status` | `in_stock`, `reserved` o `sold` |
    | `photo_url` | Enlace a la foto. Si se deja vacío sale un ícono con "Foto próximamente" |
    | `published` | **Déjalo en `false` mientras lo preparas.** Ponlo en `true` para que aparezca en el sitio |
@@ -89,6 +91,23 @@ Proyecto: `ronaldfdez Dealer MJ` → https://uampqldgiditxueqmtlj.supabase.co
 **`published` es el interruptor de publicación**: un auto con `published = false` es
 invisible para el sitio, aunque exista en la tabla. Sirve para preparar una ficha con
 calma sin que salga a medio llenar.
+
+### ⚠️ El plan gratuito pausa la base tras ~7 días sin actividad
+
+Pasó el 18 de septiembre: el proyecto apareció como `INACTIVE` y **el inventario del
+sitio en vivo dejó de cargar** (mostraba el mensaje de error). No se pierde nada — los
+datos siguen ahí y vuelven al reactivarlo — pero mientras está pausado, la sección de
+inventario no funciona para los visitantes.
+
+Reactivarlo: panel de Supabase → botón **Restore project**. Tarda un par de minutos.
+
+> Durante esos minutos el proyecto reporta el esquema vacío y 0 usuarios. **Es un
+> espejismo, no pérdida de datos.** No hay que reconstruir nada: hay que esperar a que
+> el estado pase a `ACTIVE_HEALTHY` y volver a consultar.
+
+Para que no vuelva a pasar en un sitio de cliente hay dos caminos: entrar a la base al
+menos una vez por semana, o pasar al plan de pago de Supabase, que no pausa. Con el
+sitio en producción y cobrando, lo segundo es lo sensato.
 
 ### ⚠️ Falta configurar el envío de correos antes de abrir el registro al público
 
