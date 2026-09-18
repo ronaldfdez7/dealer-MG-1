@@ -85,7 +85,8 @@ Proyecto: `ronaldfdez Dealer MJ` → https://uampqldgiditxueqmtlj.supabase.co
    | `mileage` | Kilometraje, solo el número |
    | `mileage_unit` | `km` por defecto. Solo ponlo en `mi` si el odómetro viene en millas |
    | `status` | `in_stock`, `reserved` o `sold` |
-   | `photo_url` | Enlace a la foto. Si se deja vacío sale un ícono con "Foto próximamente" |
+   | `photo_url` | Enlace a la foto. Acepta una ruta del propio sitio (`/cars/archivo.jpg`)
+     o una URL completa. Vacío = sale el ícono con "Foto próximamente" |
    | `published` | **Déjalo en `false` mientras lo preparas.** Ponlo en `true` para que aparezca en el sitio |
 
 3. Los cambios salen en la web al recargar la página. No hay que desplegar nada.
@@ -179,10 +180,13 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
 - [x] **Autos reales en el inventario** — los ficticios se borraron. Hoy hay un auto
       real (Toyota Hilux 2023). Los huecos de la fila se completan solos con casillas
       "SOON" hasta que entre más stock.
-- [ ] **Fotos del inventario** — el Hilux no tiene foto. **No se pueden usar las de las
-      subastas japonesas (USS, NAA)**: llevan marca de agua prohibiendo el uso y USS
-      advierte que suspende el acceso de quien las reutilice — y el negocio compra ahí.
-      Hacen falta fotos propias del vehículo.
+- [x] **Foto del Hilux** — publicada en `dist/cars/`, servida por Netlify. El dueño
+      autorizó el uso de estas imágenes; conviene tener esa autorización por escrito
+      **de la casa de subasta (USS/NAA)**, que es quien retiene el copyright según sus
+      propios avisos — no del dueño del vehículo, que no posee las fotos que otro tomó.
+- [ ] **Almacenamiento de fotos para el resto del inventario** — hoy las imágenes van
+      en el repositorio, lo que exige tocar código por cada auto. Falta montar Supabase
+      Storage para que el negocio las suba desde el panel, como ya hace con los datos.
 - [ ] **SMTP para las cuentas** — el registro y la recuperación de contraseña ya
       funcionan, pero los correos solo llegan a direcciones preautorizadas hasta
       conectar un SMTP propio. Ver el aviso en la sección de la base de datos.
