@@ -584,9 +584,16 @@
   .inv-specs{ color:var(--muted); font-size:0.83rem; }
   .inv-price{ font-weight:800; font-size:1.2rem; color:var(--accent); margin:6px 0 14px; }
   .inv-body .btn{ margin-top:auto; }
-  .inv-note{
-    margin-top:30px; padding:16px 20px; border:1px dashed var(--line); border-radius:12px;
-    color:var(--muted); font-size:0.82rem; line-height:1.7;
+  /* a held place, not a listing: no hover lift, no pointer, just the word */
+  .inv-soon{
+    min-height:290px; display:flex; align-items:center; justify-content:center;
+    border-style:dashed; background:transparent;
+  }
+  .inv-soon:hover{ border-color:var(--line); transform:none; }
+  .inv-soon-word{
+    font-family:'Archivo', ui-sans-serif, sans-serif; font-style:italic; font-weight:900;
+    font-size:1.15rem; letter-spacing:0.26em; text-indent:0.26em;
+    color:var(--muted); opacity:0.55; text-transform:uppercase;
   }
 
   /* ============ REQUEST ============ */
@@ -922,7 +929,6 @@
     </div>
     <div class="inv-grid reveal" id="invGrid"></div>
     <p class="inv-state" id="invState" data-i18n="inv_loading">Loading the inventory&hellip;</p>
-    <p class="inv-note reveal" data-i18n="inv_note">Sample listings shown while the real inventory photos and prices are being added &mdash; nothing here is for sale yet.</p>
   </div>
 </section>
 
@@ -1264,8 +1270,6 @@
     auth_down:{en:"We couldn't reach the account service. Please check your connection and try again.",
                es:'No pudimos contactar el servicio de cuentas. Revisa tu conexión e inténtalo de nuevo.'},
     auth_need_login:{en:'Sign in to save cars to your account.',es:'Inicia sesión para guardar autos en tu cuenta.'},
-    inv_note:{en:'Sample listings shown while the real inventory photos and prices are being added &mdash; nothing here is for sale yet.',
-              es:'Autos de muestra mientras se cargan las fotos y precios reales del inventario &mdash; todavía nada aquí está a la venta.'},
     w_title:{en:'We search the whole world for it',es:'Lo buscamos en todo el mundo'},
     w_lead:{en:"Japan, Germany, the UK, the United States. We work the auctions and the dealer networks other buyers can't reach &mdash; then land the car in Jamaica, cleared and ready.",
             es:'Japón, Alemania, Reino Unido, Estados Unidos. Trabajamos las subastas y las redes de distribuidores que otros compradores no alcanzan &mdash; y traemos el auto hasta Jamaica, despachado y listo.'},
@@ -1370,9 +1374,17 @@
     document.querySelectorAll('.cur-toggle button').forEach(function(b){
       b.classList.toggle('active', b.dataset.cur === cur);
     });
-    // inventory prices follow the same toggle as the deposit amounts
-    document.querySelectorAll('.inv-price[data-usd]').forEach(function(el){
-      el.textContent = fmt(+el.dataset.usd, cur);
+    // inventory prices follow the same toggle as the deposit amounts, but each is
+    // quoted in its own currency: shown in that currency it prints the seller's exact
+    // figure, and only the other currency is a conversion at the indicative rate
+    document.querySelectorAll('.inv-price[data-amount]').forEach(function(el){
+      var amount = +el.dataset.amount;
+      var quoted = el.dataset.currency || 'USD';
+      el.textContent = cur === quoted
+        ? (cur === 'JMD' ? 'J$' : 'US$') + Math.round(amount).toLocaleString('en-US')
+        // a converted figure is not the price the seller quoted, so it is never
+        // shown as if it were exact
+        : '≈ ' + fmt(quoted === 'JMD' ? amount / USD_TO_JMD : amount, cur);
     });
     paintBudgetHint();
   }
@@ -2398,9 +2410,10 @@
       body.appendChild(el('h3', null, [car.year, car.make, car.model].filter(Boolean).join(' ')));
       body.appendChild(el('p', 'inv-specs', specLine(car)));
 
-      if (car.price_usd != null){
-        var price = el('div', 'inv-price', fmt(+car.price_usd, cur));
-        price.dataset.usd = car.price_usd;      // paintMoney() repaints these
+      if (car.price != null){
+        var price = el('div', 'inv-price');
+        price.dataset.amount = car.price;               // paintMoney() formats and
+        price.dataset.currency = car.price_currency || 'USD';   // repaints these
         body.appendChild(price);
       }
 
@@ -2421,9 +2434,20 @@
       state.textContent = t(key);
     }
 
+    // an empty tile holding the spot for stock still on its way
+    function buildSoon(){
+      var tile = el('article', 'inv-card inv-soon');
+      tile.appendChild(el('span', 'inv-soon-word', 'SOON'));
+      return tile;
+    }
+
     function applyFilter(){
       var shown = 0;
       [].forEach.call(grid.children, function(card){
+        if (card.classList.contains('inv-soon')){
+          card.hidden = onlySaved;        // placeholders are not saveable
+          return;
+        }
         var keep = !onlySaved || favs.has(card.dataset.car);
         card.hidden = !keep;
         if (keep) shown++;
@@ -2436,8 +2460,13 @@
       grid.textContent = '';
       var frag = document.createDocumentFragment();
       cars.forEach(function(c){ frag.appendChild(buildCard(c)); });
+      // round the grid out to a full row of three so a short inventory still reads
+      // as a deliberate layout rather than a half-empty one
+      var gap = (3 - (cars.length % 3)) % 3;
+      for (var i = 0; i < gap; i++) frag.appendChild(buildSoon());
       grid.appendChild(frag);
-      initSpotlightCards(grid.querySelectorAll('.inv-card'));
+      initSpotlightCards(grid.querySelectorAll('.inv-card:not(.inv-soon)'));
+      paintMoney();       // prices are formatted in one place, by the currency toggle
       applyFilter();
     }
 
@@ -2450,7 +2479,7 @@
     }
 
     fetch(SUPABASE_URL + '/rest/v1/cars'
-          + '?select=id,make,model,year,price_usd,fuel,transmission,drivetrain,mileage,mileage_unit,status,photo_url'
+          + '?select=id,make,model,year,price,price_currency,fuel,transmission,drivetrain,mileage,mileage_unit,status,photo_url'
           + '&published=eq.true&order=created_at.desc', { headers: anonHeaders() })
       .then(function(r){
         if (!r.ok) throw new Error('inventory request failed: ' + r.status);

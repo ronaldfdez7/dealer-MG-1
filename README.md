@@ -76,7 +76,9 @@ Proyecto: `ronaldfdez Dealer MJ` → https://uampqldgiditxueqmtlj.supabase.co
    | `make` | Marca: Toyota, BMW… (obligatorio) |
    | `model` | Modelo: Land Cruiser, X5… (obligatorio) |
    | `year` | Año (obligatorio) |
-   | `price_usd` | Precio **en dólares**. El sitio convierte solo a JMD |
+   | `price` | El importe, sin símbolo ni comas |
+   | `price_currency` | `JMD` o `USD` — la moneda en que cotizas. El sitio muestra esa cifra
+     exacta cuando el visitante mira en esa moneda, y la convierte marcada con `≈` en la otra |
    | `fuel` | Petrol, Diesel, Hybrid… |
    | `transmission` | Automatic / Manual |
    | `drivetrain` | 4WD, AWD, 2WD… |
@@ -174,10 +176,13 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
       suave. Una versión horizontal mejoraría bastante.
 - [ ] **Fotos propias** — la portada usa una imagen de referencia; conviene sustituirla
       por fotos de entregas reales con derechos de la empresa.
-- [ ] **Autos reales en el inventario** — la conexión a la base ya funciona, pero los
-      6 autos cargados son ficticios y sin foto. Falta que el negocio cargue los autos
-      reales (ver "Cómo agregar o editar autos" arriba) y borre los de muestra. El
-      aviso de "autos de muestra" bajo la parrilla debe quitarse en ese momento.
+- [x] **Autos reales en el inventario** — los ficticios se borraron. Hoy hay un auto
+      real (Toyota Hilux 2023). Los huecos de la fila se completan solos con casillas
+      "SOON" hasta que entre más stock.
+- [ ] **Fotos del inventario** — el Hilux no tiene foto. **No se pueden usar las de las
+      subastas japonesas (USS, NAA)**: llevan marca de agua prohibiendo el uso y USS
+      advierte que suspende el acceso de quien las reutilice — y el negocio compra ahí.
+      Hacen falta fotos propias del vehículo.
 - [ ] **SMTP para las cuentas** — el registro y la recuperación de contraseña ya
       funcionan, pero los correos solo llegan a direcciones preautorizadas hasta
       conectar un SMTP propio. Ver el aviso en la sección de la base de datos.
