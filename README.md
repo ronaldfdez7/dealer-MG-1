@@ -85,11 +85,28 @@ Proyecto: `ronaldfdez Dealer MJ` → https://uampqldgiditxueqmtlj.supabase.co
    | `mileage` | Kilometraje, solo el número |
    | `mileage_unit` | `km` por defecto. Solo ponlo en `mi` si el odómetro viene en millas |
    | `status` | `in_stock`, `reserved` o `sold` |
-   | `photo_url` | Enlace a la foto. Acepta una ruta del propio sitio (`/cars/archivo.jpg`)
-     o una URL completa. Vacío = sale el ícono con "Foto próximamente" |
+   | `photos` | **Lista** de enlaces a las fotos, en el orden en que se muestran. La
+     primera es la de portada. Vacío = sale el ícono con "Foto próximamente". Con dos o
+     más, la tarjeta las pasa sola cada 3,8 s y aparecen puntitos para saltar entre ellas |
    | `published` | **Déjalo en `false` mientras lo preparas.** Ponlo en `true` para que aparezca en el sitio |
 
 3. Los cambios salen en la web al recargar la página. No hay que desplegar nada.
+
+### Cómo subir las fotos de un auto
+
+1. En Supabase → **Storage** → bucket **`car-photos`** → **Upload file**.
+2. Sube las fotos del vehículo. Conviene un nombre que se entienda: `hilux-2023-front.jpg`.
+3. En cada archivo → **Get URL** (o los tres puntos → *Copy URL*). Copia ese enlace.
+4. Pega los enlaces en la columna `photos` de la tabla `cars`, **en el orden en que
+   quieres que se vean**. La primera es la que sale de portada en la tarjeta.
+
+**Antes de subir:** si la foto pesa más de ~1 MB, redúcela. Una foto de 2 MB por auto
+hace que la página cargue lento en el celular de un comprador. Con 1200 px de ancho y
+calidad media sobra: las del Hilux pesan ~150 KB cada una y se ven nítidas.
+
+El bucket acepta solo imágenes (JPEG, PNG, WebP, AVIF) y hasta 10 MB por archivo.
+Cualquiera puede **ver** las fotos —para eso están— pero **nadie puede subir ni borrar**
+con la llave pública del sitio: eso solo se hace desde el panel, con la cuenta del dueño.
 
 **`published` es el interruptor de publicación**: un auto con `published = false` es
 invisible para el sitio, aunque exista en la tabla. Sirve para preparar una ficha con
@@ -184,9 +201,9 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
       autorizó el uso de estas imágenes; conviene tener esa autorización por escrito
       **de la casa de subasta (USS/NAA)**, que es quien retiene el copyright según sus
       propios avisos — no del dueño del vehículo, que no posee las fotos que otro tomó.
-- [ ] **Almacenamiento de fotos para el resto del inventario** — hoy las imágenes van
-      en el repositorio, lo que exige tocar código por cada auto. Falta montar Supabase
-      Storage para que el negocio las suba desde el panel, como ya hace con los datos.
+- [x] **Almacenamiento de fotos** — bucket `car-photos` creado en Supabase Storage.
+      Las del Hilux siguen en el repositorio (se subieron antes de montarlo); moverlas
+      es opcional y solo cambia el valor de la fila.
 - [ ] **SMTP para las cuentas** — el registro y la recuperación de contraseña ya
       funcionan, pero los correos solo llegan a direcciones preautorizadas hasta
       conectar un SMTP propio. Ver el aviso en la sección de la base de datos.

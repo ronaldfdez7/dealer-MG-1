@@ -495,7 +495,31 @@
     border-bottom:1px solid var(--line);
   }
   .inv-photo svg{ width:58%; height:auto; opacity:0.55; }
-  .inv-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* the shots stack in place and cross-fade; only the current one is opaque */
+  .inv-shots{ position:absolute; inset:0; }
+  .inv-shots img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+    opacity:0; transition:opacity .7s ease;
+  }
+  .inv-shots img.on{ opacity:1; }
+  @media (prefers-reduced-motion: reduce){
+    .inv-shots img{ transition:none; }
+  }
+  /* the dots sit on their own dark pill: a white truck against a pale wall leaves
+     nothing for them to contrast with otherwise */
+  .inv-dots{
+    position:absolute; bottom:11px; left:50%; transform:translateX(-50%); z-index:3;
+    display:flex; gap:7px; padding:6px 9px; border-radius:999px;
+    background:rgba(8,14,24,0.42); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  }
+  .inv-dot{
+    width:6px; height:6px; padding:0; border:none; border-radius:50%; cursor:pointer;
+    background:rgba(255,255,255,0.5); transition:background .2s ease, transform .2s var(--ease);
+  }
+  .inv-dot.on{ background:#fff; transform:scale(1.3); }
+  .inv-dot:hover{ background:rgba(255,255,255,0.85); }
+  .inv-dot:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
   .inv-state{ margin-top:36px; text-align:center; color:var(--muted); font-size:0.92rem; line-height:1.7; }
 
   .inv-fav{
@@ -2381,17 +2405,76 @@
       b.title = t(key);
     }
 
+    /* The photo strip. It cross-fades on its own, but only while the card is on
+       screen - the globe taught us what an always-running timer costs - and never
+       when the visitor has asked for reduced motion, where it stays on the first
+       shot and the dots become the only way through. */
+    var SHOT_MS = 3800;
+    function buildShots(urls, name, card){
+      var wrap = el('div', 'inv-shots');
+      urls.forEach(function(u, i){
+        var img = document.createElement('img');
+        img.src = u;
+        img.alt = urls.length > 1 ? name + ' (' + (i + 1) + '/' + urls.length + ')' : name;
+        img.loading = i === 0 ? 'eager' : 'lazy';   // only the visible one is urgent
+        if (i === 0) img.className = 'on';
+        wrap.appendChild(img);
+      });
+      if (urls.length < 2) return wrap;
+
+      var imgs = wrap.querySelectorAll('img');
+      var dots = el('div', 'inv-dots');
+      dots.setAttribute('role', 'tablist');
+      var buttons = urls.map(function(u, i){
+        var d = el('button', 'inv-dot' + (i ? '' : ' on'));
+        d.type = 'button';
+        d.setAttribute('role', 'tab');
+        d.setAttribute('aria-label', name + ' — ' + (i + 1));
+        d.addEventListener('click', function(e){
+          e.stopPropagation();          // the dot picks a photo, it is not a card click
+          show(i); hold();
+        });
+        dots.appendChild(d);
+        return d;
+      });
+      wrap.appendChild(dots);
+
+      var at = 0, timer = null, onScreen = false;
+      function show(n){
+        at = (n + imgs.length) % imgs.length;
+        for (var i = 0; i < imgs.length; i++) imgs[i].classList.toggle('on', i === at);
+        buttons.forEach(function(d, i){
+          d.classList.toggle('on', i === at);
+          d.setAttribute('aria-selected', i === at ? 'true' : 'false');
+        });
+      }
+      function run(){ if (!timer && onScreen && !reduce) timer = setInterval(function(){ show(at + 1); }, SHOT_MS); }
+      function stop(){ if (timer){ clearInterval(timer); timer = null; } }
+      function hold(){ stop(); run(); }      // restart the clock after a manual pick
+
+      if ('IntersectionObserver' in window){
+        new IntersectionObserver(function(entries){
+          onScreen = entries[entries.length - 1].isIntersecting;
+          if (onScreen) run(); else stop();
+        }, { threshold: 0.25 }).observe(card);
+      } else {
+        onScreen = true; run();
+      }
+      // let someone linger on a shot without it sliding away
+      card.addEventListener('pointerenter', stop);
+      card.addEventListener('pointerleave', run);
+      return wrap;
+    }
+
     function buildCard(car){
       var card = el('article', 'inv-card');
       card.dataset.car = car.id;
 
       var photo = el('div', 'inv-photo');
-      if (car.photo_url){
-        var img = document.createElement('img');
-        img.src = car.photo_url;
-        img.alt = [car.year, car.make, car.model].filter(Boolean).join(' ');
-        img.loading = 'lazy';
-        photo.appendChild(img);
+      var name = [car.year, car.make, car.model].filter(Boolean).join(' ');
+      var shots = (car.photos || []).filter(Boolean);
+      if (shots.length){
+        photo.appendChild(buildShots(shots, name, card));
       } else {
         photo.innerHTML = CAR_SVG;
         var soon = el('span', 'inv-photo-note', t('inv_photo_soon'));
@@ -2479,7 +2562,7 @@
     }
 
     fetch(SUPABASE_URL + '/rest/v1/cars'
-          + '?select=id,make,model,year,price,price_currency,fuel,transmission,drivetrain,mileage,mileage_unit,status,photo_url'
+          + '?select=id,make,model,year,price,price_currency,fuel,transmission,drivetrain,mileage,mileage_unit,status,photos'
           + '&published=eq.true&order=created_at.desc', { headers: anonHeaders() })
       .then(function(r){
         if (!r.ok) throw new Error('inventory request failed: ' + r.status);
