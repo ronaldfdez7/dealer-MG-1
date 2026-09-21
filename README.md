@@ -42,9 +42,10 @@ son las tipografías de Google Fonts (Archivo y Plus Jakarta Sans).
 - **Autos guardados**: con sesión iniciada, el corazón de cada auto lo guarda en la
   cuenta, y un filtro deja ver solo los guardados
 - **Formulario de solicitud**: marca, modelo, año y presupuesto
-- **Sección de depósito** con tres vías de pago y conversor de moneda. La página
-  **abre en JMD**, que es como cotiza el negocio; el botón USD/JMD de la barra
-  convierte todo a dólares cuando hace falta
+- **Sección de depósito** con tres vías de pago y un campo donde el visitante escribe
+  el monto acordado y lo ve convertido a la otra moneda. La página **abre en JMD**, que
+  es como cotiza el negocio; el botón USD/JMD de la barra convierte todo a dólares
+  cuando hace falta
 - **Bilingüe** inglés / español, y **modo día / noche** que respeta el ajuste del
   sistema y se puede forzar con el botón
 - Respeta `prefers-reduced-motion`: sin animaciones automáticas si el visitante
@@ -182,7 +183,10 @@ Esto es una **vista previa de diseño**. La página lo dice abiertamente en vari
 sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
 
 - [ ] **Números de cuenta bancaria** — NCB, Scotiabank y JN Bank dicen "pendiente"
-- [ ] **Montos de depósito reales** — los de US$500 / 1.000 / 2.500 / 5.000 son supuestos
+- [x] **Montos de depósito** — resuelto: el dueño confirmó que **no hay montos fijos**,
+      el depósito se acuerda vehículo por vehículo. Los cuatro botones inventados
+      (US$500 / 1.000 / 2.500 / 5.000) se quitaron y en su lugar hay un campo donde el
+      visitante escribe el monto que se le cotizó y lo ve en las dos monedas
 - [ ] **Pasarela de pago** — hace falta cuenta de comercio (First Atlantic Commerce
       o WiPay) y un servidor que autorice cada cobro. La página **no pide datos de
       tarjeta en ningún punto**, y así debe seguir hasta que exista ese servidor.

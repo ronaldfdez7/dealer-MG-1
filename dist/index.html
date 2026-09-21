@@ -412,20 +412,39 @@
 
   .pay-amount{ margin-top:52px; display:flex; flex-wrap:wrap; gap:36px; align-items:flex-end; justify-content:space-between; }
   .field-label{ display:block; font-size:0.64rem; color:var(--muted); font-weight:800; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:14px; }
-  .amount-chips{ display:flex; gap:10px; flex-wrap:wrap; }
-  .amount-chip{
-    background:transparent; border:1px solid var(--line); color:var(--muted); cursor:pointer;
-    border-radius:999px; padding:12px 22px; font-weight:700; font-size:0.9rem;
-    transition:border-color .2s ease, color .2s ease, background .2s ease;
+  /* the deposit is agreed vehicle by vehicle, so the visitor types the figure
+     they were quoted instead of picking from amounts we made up */
+  .amount-ask{ flex:1 1 320px; max-width:380px; }
+  .amount-entry{
+    display:flex; align-items:center; background:var(--surface);
+    border:1px solid var(--line); border-radius:11px; padding:0 16px;
+    transition:border-color .2s ease, box-shadow .2s ease;
   }
-  .amount-chip:hover{ color:var(--ink); border-color:var(--accent); }
-  .amount-chip.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
-  .amount-chip:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .amount-entry:focus-within{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .amount-cur{ font-weight:800; color:var(--muted); font-size:1rem; padding-right:9px; flex:none; }
+  .amount-entry input{
+    flex:1; min-width:0; background:transparent; border:none; color:var(--ink);
+    font-family:inherit; font-size:1.05rem; font-weight:700; padding:15px 0;
+  }
+  .amount-entry input:focus{ outline:none; }
+  .amount-entry input::placeholder{ color:var(--muted); opacity:.65; font-weight:500; font-size:0.9rem; }
+  .amount-note{ display:block; color:var(--muted); font-size:0.76rem; margin-top:13px; line-height:1.65; }
   .pay-total{ text-align:right; }
-  @media (max-width:640px){ .pay-total{ text-align:left; } .pay-amount{ gap:26px; } }
   .pay-big{ display:block; font-family:'Archivo'; font-style:italic; font-weight:900; font-size:clamp(2rem,5vw,3rem); line-height:1; }
   .pay-alt{ display:block; color:var(--accent); font-weight:700; margin-top:8px; font-size:1.05rem; }
   .rate-note{ display:block; color:var(--muted); font-size:0.72rem; margin-top:10px; }
+
+  @media (max-width:640px){
+    .pay-total{ text-align:left; }
+    .pay-amount{ gap:26px; }
+    /* stacked on a phone the echo lands right under the box and only repeats it,
+       so the conversion takes the big type instead */
+    .pay-big{ display:none; }
+    .pay-alt{
+      font-family:'Archivo'; font-style:italic; font-weight:900;
+      font-size:clamp(1.7rem,8.5vw,2.3rem); line-height:1; margin-top:0;
+    }
+  }
 
   .pay-methods{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:52px; }
   @media (max-width:900px){ .pay-methods{ grid-template-columns:1fr; } }
@@ -1071,18 +1090,17 @@
     </div>
 
     <div class="pay-amount reveal">
-      <div>
-        <span class="field-label" data-i18n="pay_amount">Deposit amount</span>
-        <div class="amount-chips" id="depositChips">
-          <button class="amount-chip active" data-usd="500">J$80,500</button>
-          <button class="amount-chip" data-usd="1000">J$161,000</button>
-          <button class="amount-chip" data-usd="2500">J$402,500</button>
-          <button class="amount-chip" data-usd="5000">J$805,000</button>
+      <div class="amount-ask">
+        <label class="field-label" for="depositAmt" data-i18n="pay_amount">Deposit amount</label>
+        <div class="amount-entry">
+          <span class="amount-cur" id="amountCur">J$</span>
+          <input id="depositAmt" type="text" inputmode="numeric" autocomplete="off" placeholder="Enter the agreed amount">
         </div>
+        <span class="amount-note" data-i18n="pay_varies">The deposit is not a fixed figure &mdash; it depends on the vehicle, and we agree it with you before anything is paid.</span>
       </div>
       <div class="pay-total">
-        <span class="pay-big" id="payPrimary">J$80,500</span>
-        <span class="pay-alt" id="payAlt">US$500</span>
+        <span class="pay-big" id="payPrimary">&mdash;</span>
+        <span class="pay-alt" id="payAlt"></span>
         <span class="rate-note" id="rateNote"></span>
       </div>
     </div>
@@ -1328,6 +1346,8 @@
     pay_lead:{en:'A deposit confirms the search and lets us bid on your behalf. The balance is settled once the vehicle is sourced, quoted and approved by you &mdash; never before.',
               es:'El depósito confirma la búsqueda y nos permite pujar en tu nombre. El resto se liquida cuando el vehículo está localizado, cotizado y aprobado por ti &mdash; nunca antes.'},
     pay_amount:{en:'Deposit amount',es:'Monto del depósito'},
+    pay_varies:{en:'The deposit is not a fixed figure \u2014 it depends on the vehicle, and we agree it with you before anything is paid.',
+                es:'El depósito no es una cifra fija \u2014 depende del vehículo, y se acuerda contigo antes de pagar nada.'},
     pm1_t:{en:'Card &mdash; Visa / Mastercard',es:'Tarjeta &mdash; Visa / Mastercard'},
     pm1_d:{en:"Processed on the bank's own secure page. You are taken there to enter your card, so the details never touch this site.",
            es:'Se procesa en la página segura del banco. Se te redirige allí para escribir la tarjeta, así los datos nunca pasan por este sitio.'},
@@ -1365,6 +1385,8 @@
     if (typeof authUI === 'object' && authUI) authUI.refresh();
     document.getElementById('fName').placeholder = (l === 'en' ? 'John Brown' : 'Juan Pérez');
     document.getElementById('fBudget').placeholder = (l === 'en' ? 'e.g. 5,000,000' : 'ej. 5,000,000');
+    var dep = document.getElementById('depositAmt');
+    if (dep) dep.placeholder = (l === 'en' ? 'Enter the agreed amount' : 'Escribe el monto acordado');
     rearmHero(); buildFeed(); paintMoney();
   }
   document.addEventListener('click', function(e){
@@ -1386,18 +1408,26 @@
   }
   function other(c){ return c === 'USD' ? 'JMD' : 'USD'; }
 
-  var depositUsd = 500;
-  function paintMoney(){
+  // the deposit varies vehicle by vehicle, so there is no amount to preset: the
+  // visitor types the figure they were quoted and the page converts it
+  function paintDeposit(){
+    var inp = document.getElementById('depositAmt');
     var pri = document.getElementById('payPrimary');
     var alt = document.getElementById('payAlt');
+    var pre = document.getElementById('amountCur');
+    if (!inp || !pri || !alt) return;
+    if (pre) pre.textContent = cur === 'JMD' ? 'J$' : 'US$';
+    var typed = parseFloat((inp.value || '').replace(/[^0-9.]/g, ''));
+    if (!typed || typed <= 0){ pri.textContent = '\u2014'; alt.textContent = ''; return; }
+    // echo the figure back cleanly separated, then the same money in the other currency
+    pri.textContent = (cur === 'JMD' ? 'J$' : 'US$') + Math.round(typed).toLocaleString('en-US');
+    alt.textContent = '\u2248 ' + fmt(cur === 'JMD' ? typed / USD_TO_JMD : typed, other(cur));
+  }
+
+  function paintMoney(){
     var note = document.getElementById('rateNote');
-    if (pri) pri.textContent = fmt(depositUsd, cur);
-    if (alt) alt.textContent = fmt(depositUsd, other(cur));
     if (note && dict.rate_note) note.textContent = dict.rate_note[lang].replace('{r}', USD_TO_JMD);
-    document.querySelectorAll('.amount-chip').forEach(function(c){
-      c.textContent = fmt(+c.dataset.usd, cur);
-      c.classList.toggle('active', +c.dataset.usd === depositUsd);
-    });
+    paintDeposit();
     document.querySelectorAll('.cur-toggle button').forEach(function(b){
       b.classList.toggle('active', b.dataset.cur === cur);
     });
@@ -1433,8 +1463,6 @@
   document.addEventListener('click', function(e){
     var b = e.target.closest('.cur-toggle button');
     if (b){ cur = b.dataset.cur; paintMoney(); return; }
-    var chip = e.target.closest('.amount-chip');
-    if (chip){ depositUsd = +chip.dataset.usd; paintMoney(); return; }
     var cp = e.target.closest('.copy-btn');
     if (cp){
       var bank = cp.dataset.copy;
@@ -1450,7 +1478,9 @@
     }
   });
   document.addEventListener('input', function(e){
-    if (e.target && e.target.id === 'fBudget') paintBudgetHint();
+    if (!e.target) return;
+    if (e.target.id === 'fBudget') paintBudgetHint();
+    if (e.target.id === 'depositAmt') paintDeposit();
   });
 
   /* ---------------- day / night ---------------- */
