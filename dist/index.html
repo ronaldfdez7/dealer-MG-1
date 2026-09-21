@@ -850,8 +850,8 @@
           <button data-lang="es">ES</button>
         </div>
         <div class="cur-toggle" aria-label="Currency">
-          <button data-cur="USD" class="active">USD</button>
-          <button data-cur="JMD">JMD</button>
+          <button data-cur="JMD" class="active">JMD</button>
+          <button data-cur="USD">USD</button>
         </div>
         <button class="icon-btn theme-btn" aria-label="Day / night">
           <svg class="ic-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
@@ -888,8 +888,8 @@
       <button data-lang="es">ES</button>
     </div>
     <div class="cur-toggle" aria-label="Currency">
-      <button data-cur="USD" class="active">USD</button>
-      <button data-cur="JMD">JMD</button>
+      <button data-cur="JMD" class="active">JMD</button>
+      <button data-cur="USD">USD</button>
     </div>
     <button class="icon-btn theme-btn" aria-label="Day / night">
       <svg class="ic-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
@@ -1038,6 +1038,7 @@
         <h2 class="chrome" data-i18n="r_title">Tell us what you're looking for</h2>
         <form id="reqForm" name="reqForm" method="POST" data-netlify="true" netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="reqForm">
+          <input type="hidden" name="budget_currency" id="fBudgetCur" value="JMD">
           <p style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
             <label>Leave this field blank: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
           </p>
@@ -1073,15 +1074,15 @@
       <div>
         <span class="field-label" data-i18n="pay_amount">Deposit amount</span>
         <div class="amount-chips" id="depositChips">
-          <button class="amount-chip active" data-usd="500">US$500</button>
-          <button class="amount-chip" data-usd="1000">US$1,000</button>
-          <button class="amount-chip" data-usd="2500">US$2,500</button>
-          <button class="amount-chip" data-usd="5000">US$5,000</button>
+          <button class="amount-chip active" data-usd="500">J$80,500</button>
+          <button class="amount-chip" data-usd="1000">J$161,000</button>
+          <button class="amount-chip" data-usd="2500">J$402,500</button>
+          <button class="amount-chip" data-usd="5000">J$805,000</button>
         </div>
       </div>
       <div class="pay-total">
-        <span class="pay-big" id="payPrimary">US$500</span>
-        <span class="pay-alt" id="payAlt">J$79,000</span>
+        <span class="pay-big" id="payPrimary">J$80,500</span>
+        <span class="pay-alt" id="payAlt">US$500</span>
         <span class="rate-note" id="rateNote"></span>
       </div>
     </div>
@@ -1373,8 +1374,10 @@
   /* ---------------- currency: USD <-> JMD ----------------
      One place to change the rate. A live site should pull this from a rate
      feed on the server instead of hard-coding it. */
-  var USD_TO_JMD = 158;
-  var cur = 'USD';
+  var USD_TO_JMD = 161;
+  // the business sells in Jamaica and quotes in Jamaican dollars, so that is what
+  // the page opens in; the toggle still converts everything to USD on demand
+  var cur = 'JMD';
 
   function fmt(n, currency){
     var v = Math.round(currency === 'JMD' ? n * USD_TO_JMD : n);
@@ -1398,6 +1401,10 @@
     document.querySelectorAll('.cur-toggle button').forEach(function(b){
       b.classList.toggle('active', b.dataset.cur === cur);
     });
+    // the budget the visitor types is read in the currency on screen; say so in the
+    // notification, otherwise "5,000,000" reaches the inbox with no way to read it
+    var bc = document.getElementById('fBudgetCur');
+    if (bc) bc.value = cur;
     // inventory prices follow the same toggle as the deposit amounts, but each is
     // quoted in its own currency: shown in that currency it prints the seller's exact
     // figure, and only the other currency is a conversion at the indicative rate

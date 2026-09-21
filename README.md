@@ -42,7 +42,9 @@ son las tipografías de Google Fonts (Archivo y Plus Jakarta Sans).
 - **Autos guardados**: con sesión iniciada, el corazón de cada auto lo guarda en la
   cuenta, y un filtro deja ver solo los guardados
 - **Formulario de solicitud**: marca, modelo, año y presupuesto
-- **Sección de depósito** con tres vías de pago y conversor de moneda
+- **Sección de depósito** con tres vías de pago y conversor de moneda. La página
+  **abre en JMD**, que es como cotiza el negocio; el botón USD/JMD de la barra
+  convierte todo a dólares cuando hace falta
 - **Bilingüe** inglés / español, y **modo día / noche** que respeta el ajuste del
   sistema y se puede forzar con el botón
 - Respeta `prefers-reduced-motion`: sin animaciones automáticas si el visitante
@@ -186,8 +188,10 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
       tarjeta en ningún punto**, y así debe seguir hasta que exista ese servidor.
 - [x] **Formulario de solicitud** — conectado a Netlify Forms; llega al correo configurado
       en el panel de Netlify (Site settings → Forms → Form notifications) y también queda
-      guardado ahí bajo la pestaña "Forms"
-- [ ] **Tasa de cambio** — fija en 158 JMD/USD, etiquetada como indicativa. En producción
+      guardado ahí bajo la pestaña "Forms". El aviso incluye un campo `budget_currency`
+      con la moneda que el visitante tenía en pantalla al escribir el presupuesto, para
+      que "5,000,000" no se lea como dólares por error
+- [ ] **Tasa de cambio** — fija en 161 JMD/USD, etiquetada como indicativa. En producción
       debería venir de un servicio de tasas. Se cambia en la constante `USD_TO_JMD`
       dentro de `dist/index.html`.
 - [ ] **Video de portada** — es vertical (540×960); en escritorio se recorta y se ve
