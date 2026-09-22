@@ -34,8 +34,9 @@ son las tipografías de Google Fonts (Archivo y Plus Jakarta Sans).
 - **Globo 3D interactivo** (canvas, arrastrable, con inercia) que muestra las rutas
   de búsqueda mundial convergiendo en Kingston
 - **Proceso de 4 pasos** en scroll horizontal en escritorio, apilado en móvil
-- **Inventario** (`#inventario`): parrilla de autos en stock con foto, specs, precio y
-  estado, **leída en vivo desde la base de datos** (Supabase). Los precios siguen el
+- **Inventario** (`#inventario`): parrilla de autos en stock con foto, precio, estado y
+  una **ficha de specs con etiquetas** (transmisión, kilometraje, combustible y
+  tracción), **leída en vivo desde la base de datos** (Supabase). Los precios siguen el
   selector USD/JMD igual que la sección de depósito
 - **Cuentas de cliente**: registro, inicio de sesión, cierre de sesión y recuperación
   de contraseña. La sesión sobrevive a recargas y se renueva sola
@@ -86,6 +87,11 @@ Proyecto: `ronaldfdez Dealer MJ` → https://uampqldgiditxueqmtlj.supabase.co
    | `transmission` | Automatic / Manual |
    | `drivetrain` | 4WD, AWD, 2WD… |
    | `mileage` | Kilometraje, solo el número |
+
+   Estos cuatro (más `mileage_unit`) son los que salen en la ficha de specs de la
+   tarjeta, cada uno con su etiqueta. **Un campo que dejes vacío no desaparece: sale
+   con una raya (—).** Es a propósito — un hueco se lee como "no se sabe", y esconderlo
+   haría que un auto sin datos pareciera mejor documentado que otro.
    | `mileage_unit` | `km` por defecto. Solo ponlo en `mi` si el odómetro viene en millas |
    | `status` | `in_stock`, `reserved` o `sold` |
    | `photos` | **Lista** de enlaces a las fotos, en el orden en que se muestran. La

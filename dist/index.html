@@ -624,7 +624,18 @@
   .inv-status.sold{ border-color:var(--line); color:var(--muted); }
   .inv-body{ position:relative; z-index:2; padding:22px 22px 24px; display:flex; flex-direction:column; gap:6px; flex:1; }
   .inv-body h3{ font-size:1.08rem; letter-spacing:0.01em; }
-  .inv-specs{ color:var(--muted); font-size:0.83rem; }
+  .inv-specs{
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:15px 18px; margin:9px 0 5px;
+  }
+  .inv-spec dt{
+    font-size:0.58rem; color:var(--muted); font-weight:800;
+    letter-spacing:0.12em; text-transform:uppercase; margin-bottom:4px;
+  }
+  .inv-spec dd{
+    margin:0; font-size:0.88rem; font-weight:700; color:var(--ink);
+    overflow-wrap:anywhere;
+  }
   .inv-price{ font-weight:800; font-size:1.2rem; color:var(--accent); margin:6px 0 14px; }
   .inv-body .btn{ margin-top:auto; }
   /* a held place, not a listing: no hover lift, no pointer, just the word */
@@ -1261,6 +1272,10 @@
     inv_lead:{en:'A small, changing selection of vehicles already in Jamaica, inspected and ready for immediate sale &mdash; no waiting on a search.',
                es:'Una selección pequeña y cambiante de vehículos ya en Jamaica, inspeccionados y listos para la venta inmediata &mdash; sin esperar una búsqueda.'},
     inv_cta:{en:'Ask about this car',es:'Preguntar por este auto'},
+    spec_transmission:{en:'Transmission',es:'Transmisión'},
+    spec_mileage:{en:'Mileage',es:'Kilometraje'},
+    spec_fuel:{en:'Fuel',es:'Combustible'},
+    spec_drive:{en:'Drive',es:'Tracción'},
     inv_photo_soon:{en:'Photo coming soon',es:'Foto próximamente'},
     inv_status_stock:{en:'In stock',es:'Disponible'},
     inv_status_reserved:{en:'Reserved',es:'Reservado'},
@@ -2400,18 +2415,36 @@
       return n;
     }
 
-    function specLine(car){
-      return [
-        car.fuel,
-        car.transmission,
-        car.drivetrain,
-        // the unit comes from the row: these are Japanese and European imports sold
-        // in Jamaica, so odometers are in km - printing "mi" against a km figure
-        // understates the distance by roughly 40% to anyone reading the listing
-        car.mileage != null
-          ? car.mileage.toLocaleString('en-US') + ' ' + (car.mileage_unit || 'km')
-          : null
-      ].filter(Boolean).join(' · ');
+    // a buyer compares listings field by field, so each spec gets its own labelled
+    // cell instead of being run together in one line. A field we do not have is still
+    // shown, with a dash: dropping it would quietly make one car look better
+    // specified than another, and leave the grid ragged
+    var SPECS = [
+      { key:'spec_transmission', get:function(c){ return c.transmission; } },
+      { key:'spec_mileage',      get:function(c){
+          // the unit comes from the row: these are Japanese and European imports sold
+          // in Jamaica, so odometers are in km - printing "mi" against a km figure
+          // understates the distance by roughly 40% to anyone reading the listing
+          return c.mileage != null
+            ? c.mileage.toLocaleString('en-US') + ' ' + (c.mileage_unit || 'km')
+            : null;
+        } },
+      { key:'spec_fuel',  get:function(c){ return c.fuel; } },
+      { key:'spec_drive', get:function(c){ return c.drivetrain; } }
+    ];
+
+    function specGrid(car){
+      var grid = el('dl', 'inv-specs');
+      SPECS.forEach(function(spec){
+        // dt and dd would otherwise land in separate grid cells and drift apart
+        var cell = el('div', 'inv-spec');
+        var label = el('dt', null, t(spec.key));
+        label.setAttribute('data-i18n', spec.key);
+        cell.appendChild(label);
+        cell.appendChild(el('dd', null, spec.get(car) || '\u2014'));
+        grid.appendChild(cell);
+      });
+      return grid;
     }
 
     function heartFor(car){
@@ -2528,7 +2561,7 @@
 
       var body = el('div', 'inv-body');
       body.appendChild(el('h3', null, [car.year, car.make, car.model].filter(Boolean).join(' ')));
-      body.appendChild(el('p', 'inv-specs', specLine(car)));
+      body.appendChild(specGrid(car));
 
       if (car.price != null){
         var price = el('div', 'inv-price');
