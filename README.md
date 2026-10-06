@@ -123,20 +123,35 @@ calma sin que salga a medio llenar.
 
 ### ⚠️ El plan gratuito pausa la base tras ~7 días sin actividad
 
-Pasó el 18 de septiembre: el proyecto apareció como `INACTIVE` y **el inventario del
-sitio en vivo dejó de cargar** (mostraba el mensaje de error). No se pierde nada — los
-datos siguen ahí y vuelven al reactivarlo — pero mientras está pausado, la sección de
-inventario no funciona para los visitantes.
+**Ya pasó dos veces**: el 18 de septiembre y el 6 de octubre. Las dos veces el proyecto
+apareció como `INACTIVE` y **el inventario del sitio en vivo dejó de cargar** (mostraba
+el mensaje de error a los visitantes). No se pierde nada — los datos siguen ahí y
+vuelven al reactivarlo — pero mientras está pausado, cualquiera que entre a la web ve
+un error en lugar de los autos.
 
-Reactivarlo: panel de Supabase → botón **Restore project**. Tarda un par de minutos.
+Reactivarlo: panel de Supabase → botón **Restore project**.
 
-> Durante esos minutos el proyecto reporta el esquema vacío y 0 usuarios. **Es un
-> espejismo, no pérdida de datos.** No hay que reconstruir nada: hay que esperar a que
-> el estado pase a `ACTIVE_HEALTHY` y volver a consultar.
+**Cuánto tarda, de verdad:** la primera vez fueron un par de minutos. La segunda tardó
+cerca de **media hora**. No hay que alarmarse ni tocar nada mientras tanto.
 
-Para que no vuelva a pasar en un sitio de cliente hay dos caminos: entrar a la base al
+El estado pasa por tres fases, y conviene saber leerlas:
+
+| Estado | Qué significa |
+|---|---|
+| `INACTIVE` | Pausado. El sitio muestra el error. |
+| `COMING_UP` | Levantando la máquina. **El esquema reporta vacío.** |
+| `RESTORING` | Devolviendo los datos a su sitio. El esquema sigue incompleto. |
+| `ACTIVE_HEALTHY` | Listo. Recién aquí tiene sentido consultar. |
+
+> Durante `COMING_UP` y `RESTORING` el proyecto reporta **el esquema vacío, 0 tablas y
+> 0 usuarios**. **Es un espejismo, no pérdida de datos.** No hay que reconstruir nada
+> ni volver a correr las migraciones — eso sí haría daño. Hay que esperar a
+> `ACTIVE_HEALTHY` y volver a consultar.
+
+Para que no vuelva a pasar en un sitio de cliente hay dos caminos: tocar la base al
 menos una vez por semana, o pasar al plan de pago de Supabase, que no pausa. Con el
-sitio en producción y cobrando, lo segundo es lo sensato.
+sitio en producción y cobrando, lo segundo es lo sensato: son ~US$25/mes contra el
+cliente entrando a su propia web y encontrándola rota.
 
 ### ⚠️ Falta configurar el envío de correos antes de abrir el registro al público
 
