@@ -148,10 +148,30 @@ El estado pasa por tres fases, y conviene saber leerlas:
 > ni volver a correr las migraciones — eso sí haría daño. Hay que esperar a
 > `ACTIVE_HEALTHY` y volver a consultar.
 
-Para que no vuelva a pasar en un sitio de cliente hay dos caminos: tocar la base al
-menos una vez por semana, o pasar al plan de pago de Supabase, que no pausa. Con el
-sitio en producción y cobrando, lo segundo es lo sensato: son ~US$25/mes contra el
-cliente entrando a su propia web y encontrándola rota.
+### Hay una tarea programada que la mantiene despierta
+
+Desde el 6 de octubre hay una Routine (`trig_01QknDnrRY7BtoNzwdcUdoVY`,
+"Mantener despierta la base de Total Trading") que **lunes y jueves a las 9 AM de
+Jamaica** hace una petición real al API REST, igual que la haría un visitante. Esa
+petición cuenta como actividad y reinicia el contador de los 7 días.
+
+Dos veces por semana y no una porque el margen de 7 días es demasiado justo: si el
+único aviso semanal falla una vez, la base se cae igual. Con lunes y jueves nunca
+pasan más de 4 días entre toques.
+
+**Lo que esa tarea NO puede hacer:** reactivar la base si ya se cayó. Las sesiones que
+dispara no llevan las herramientas de Supabase, solo `curl`. Si encuentra el API caído
+**manda un aviso al teléfono** y hay que entrar al panel a pulsar *Restore project* a
+mano. Si algún día se quiere que lo haga sola, hay que añadirle el conector de Supabase
+desde la pantalla de Routines en claude.ai.
+
+Cuando todo está bien la tarea no avisa nada. El silencio es la señal buena.
+
+### Esto sigue siendo un parche
+
+La tarea programada evita el síntoma, no la causa. El arreglo de verdad es **pasar al
+plan de pago de Supabase**, que no pausa: son ~US$25/mes contra el cliente entrando a
+su propia web y encontrándola rota.
 
 ### ⚠️ Falta configurar el envío de correos antes de abrir el registro al público
 
