@@ -1066,12 +1066,8 @@
     <div class="request-grid reveal">
       <div class="request-form">
         <h2 class="chrome" data-i18n="r_title">Tell us what you're looking for</h2>
-        <form id="reqForm" name="reqForm" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-          <input type="hidden" name="form-name" value="reqForm">
+        <form id="reqForm" name="reqForm">
           <input type="hidden" name="budget_currency" id="fBudgetCur" value="JMD">
-          <p style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
-            <label>Leave this field blank: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
-          </p>
           <div class="req-fields">
             <div class="field"><label for="fName" data-i18n="l_name">Your name</label><input id="fName" name="name" type="text" required placeholder="John Brown"></div>
             <div class="field"><label for="fContact" data-i18n="l_contact">Phone or WhatsApp</label><input id="fContact" name="phone" type="tel" required placeholder="+1 876 000 0000"></div>
@@ -1080,10 +1076,8 @@
             <div class="field"><label for="fYear" data-i18n="l_year">Year</label><select id="fYear" name="year"></select></div>
             <div class="field"><label for="fBudget" data-i18n="l_budget">Budget</label><input id="fBudget" name="budget" type="text" inputmode="numeric" placeholder="e.g. 5,000,000"><span class="budget-hint" id="budgetHint"></span></div>
           </div>
-          <button type="submit" class="btn btn-primary btn-block" style="margin-top:28px;" data-i18n="r_cta">Send my request</button>
-          <p class="form-note" data-i18n="r_note">We reply by phone, WhatsApp or email, usually within one business day.</p>
-          <div class="form-success" id="reqSuccess" hidden data-i18n="r_ok">Thanks! Your request is on its way to the team.</div>
-          <div class="form-error" id="reqError" hidden data-i18n="r_err">Something went wrong sending this. Please WhatsApp or email us directly using the details below.</div>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top:28px;" data-i18n="r_cta">Send my request on WhatsApp</button>
+          <p class="form-note" data-i18n="r_note">WhatsApp opens with your request already written. Nothing is sent until you press send.</p>
         </form>
       </div>
       <div class="request-photo"><img id="reqPhoto" src="seal.png" alt="Total Trading Limited"></div>
@@ -1343,13 +1337,9 @@
     l_name:{en:'Your name',es:'Tu nombre'}, l_contact:{en:'Phone or WhatsApp',es:'Teléfono o WhatsApp'},
     l_make:{en:'Brand or make',es:'Marca'}, l_model:{en:'Model',es:'Modelo'},
     l_year:{en:'Year',es:'Año'}, l_budget:{en:'Budget',es:'Presupuesto'},
-    r_cta:{en:'Send my request',es:'Enviar mi solicitud'},
-    r_note:{en:'We reply by phone, WhatsApp or email, usually within one business day.',
-            es:'Te respondemos por teléfono, WhatsApp o correo, normalmente en menos de un día hábil.'},
-    r_ok:{en:'Thanks! Your request is on its way to the team.',
-          es:'¡Gracias! Tu solicitud ya está en camino al equipo.'},
-    r_err:{en:'Something went wrong sending this. Please WhatsApp or email us directly using the details below.',
-           es:'Algo falló al enviar esto. Escríbenos por WhatsApp o correo directamente con los datos de abajo.'},
+    r_cta:{en:'Send my request on WhatsApp',es:'Enviar mi solicitud por WhatsApp'},
+    r_note:{en:'WhatsApp opens with your request already written. Nothing is sent until you press send.',
+            es:'Se abre WhatsApp con tu solicitud ya escrita. No se envía nada hasta que tú lo mandes.'},
     c_t1:{en:'Ready to get',es:'¿Listo para tener'}, c_t2:{en:'your dream car?',es:'el auto de tus sueños?'},
     c_cta:{en:'Contact us today!',es:'¡Contáctanos hoy!'},
     foot_about:{en:'Special vehicle orders, sourced worldwide. Tell us the car, the year and the budget — we take care of the rest.',
@@ -1561,33 +1551,27 @@
   for (var y = now + 1; y >= now - 20; y--) opts.push('<option>' + y + '</option>');
   ySel.innerHTML = opts.join('');
   (function(){
+    /* The request goes out as a WhatsApp message, already written, in the
+       visitor's language. It used to post to Netlify Forms; the site no longer
+       runs on Netlify, so that endpoint is gone. window.location.href, not
+       window.open: in-app browsers (Instagram, Facebook) block window.open. */
     var reqFormEl = document.getElementById('reqForm');
-    var successEl = document.getElementById('reqSuccess');
-    var errorEl = document.getElementById('reqError');
-    var submitBtn = reqFormEl.querySelector('button[type="submit"]');
-    var sendingLabel = { en:'Sending…', es:'Enviando…' };
+    var WA = '18764043325';
+    var L = {
+      en: { hi:'Hello Total Trading, I would like you to find me a car.', name:'Name', phone:'Phone / WhatsApp', make:'Make', model:'Model', year:'Year', budget:'Budget', any:'Any' },
+      es: { hi:'Hola Total Trading, quiero que me busquen un auto.', name:'Nombre', phone:'Teléfono / WhatsApp', make:'Marca', model:'Modelo', year:'Año', budget:'Presupuesto', any:'Cualquiera' }
+    };
     reqFormEl.addEventListener('submit', function(e){
       e.preventDefault();
-      successEl.hidden = true;
-      errorEl.hidden = true;
-      submitBtn.disabled = true;
-      var restoreLabel = submitBtn.textContent;
-      submitBtn.textContent = sendingLabel[lang] || sendingLabel.en;
-      var body = new URLSearchParams(new FormData(reqFormEl)).toString();
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: body
-      }).then(function(res){
-        if (!res.ok) throw new Error('Netlify form submission failed: ' + res.status);
-        successEl.hidden = false;
-        reqFormEl.reset();
-      }).catch(function(){
-        errorEl.hidden = false;
-      }).then(function(){
-        submitBtn.disabled = false;
-        submitBtn.textContent = restoreLabel;
-      });
+      var t = L[lang] || L.en;
+      var v = function(id){ return (document.getElementById(id).value || '').trim(); };
+      var year = v('fYear') === 'any' ? t.any : v('fYear');
+      var budget = v('fBudget') ? v('fBudget') + ' ' + v('fBudgetCur') : '';
+      var lines = [t.hi, '', t.name + ': ' + v('fName'), t.phone + ': ' + v('fContact'), t.make + ': ' + v('fMake')];
+      if (v('fModel')) lines.push(t.model + ': ' + v('fModel'));
+      lines.push(t.year + ': ' + year);
+      if (budget) lines.push(t.budget + ': ' + budget);
+      window.location.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(lines.join('\n'));
     });
   })();
 
