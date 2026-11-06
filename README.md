@@ -20,8 +20,8 @@ dist/
   seal.png      sello de marca, panel de pedido especial
   seal-sm.png   sello reducido, barra superior / pie / favicon
   og.png        imagen de vista previa al compartir el enlace
-  _headers      cabeceras de seguridad y caché
-netlify.toml    configuración de despliegue
+  _headers      cabeceras de seguridad y caché (Cloudflare lo lee de aquí)
+netlify.toml    resto del hosting anterior; Cloudflare NO lo lee
 ```
 
 Todo el JavaScript es propio, sin librerías externas. Las únicas peticiones de red
@@ -54,17 +54,39 @@ son las tipografías de Google Fonts (Archivo y Plus Jakarta Sans).
 
 ## Despliegue
 
-Proyecto en Netlify: `total-trading-limited`
-(site id `46601eab-8855-4222-908e-d35dd1277a29`) → https://total-trading-limited.netlify.app
+**Cloudflare Pages** → https://total-trading-limited.pages.dev
 
-Desde una máquina con Node:
+El proyecto está conectado a GitHub: **cada push a la rama `claude/cloudflare-migracion`
+se publica solo**. No hay comando que correr ni carpeta que arrastrar.
 
-```sh
-npx netlify deploy --prod --dir=dist --site=46601eab-8855-4222-908e-d35dd1277a29
-```
+> ⚠️ **La rama de producción es `claude/cloudflare-migracion`, no `main`.** Un cambio
+> que se quede en `main` no sale al aire.
 
-O manualmente: arrastrar el contenido de `dist/` a la zona de despliegue en
-https://app.netlify.com/projects/total-trading-limited/deploys
+### ⚠️ Las compilaciones son un recurso compartido
+
+Cloudflare da **500 compilaciones al mes para todos los sitios de OmniaLink juntos**, y
+cada push a una rama de producción gasta una. Por eso:
+
+- Junta los cambios y súbelos en **un solo push**, no de a uno.
+- Verifica antes de subir (abre el sitio, mira capturas, corre las pruebas).
+- Nunca subas commits de prueba "a ver si sale".
+
+Si se agota el límite los sitios no se caen, pero no se publica nada nuevo hasta el mes
+siguiente.
+
+### Qué cambió al salir de Netlify (5 nov 2026)
+
+Netlify restringió toda la cuenta por falta de créditos del plan gratis y bajó los seis
+sitios de golpe. La dirección `.netlify.app` **ya no funciona**.
+
+Dos cosas que no se heredan y hay que recordar:
+
+- **Cloudflare no lee `netlify.toml`.** Las cabeceras van en `dist/_headers` y las
+  redirecciones irían en un `dist/_redirects`. El `_headers` ya cubre todo lo que tenía
+  el `netlify.toml` (la caché de `hero.mp4`) y además añade las de seguridad y las PNG.
+  El `netlify.toml` se queda solo porque el proyecto viejo de Netlify sigue de respaldo.
+- **Netlify Forms no existe aquí.** El formulario de pedido ya no envía a ningún
+  servidor: abre WhatsApp con el pedido escrito. Ver la sección del formulario.
 
 ## Base de datos (Supabase)
 
@@ -123,8 +145,8 @@ calma sin que salga a medio llenar.
 
 ### ⚠️ El plan gratuito pausa la base tras ~7 días sin actividad
 
-**Ya pasó dos veces**: el 18 de septiembre y el 6 de octubre. Las dos veces el proyecto
-apareció como `INACTIVE` y **el inventario del sitio en vivo dejó de cargar** (mostraba
+**Ya pasó tres veces**: el 18 de septiembre, el 6 de octubre y el 6 de noviembre. Las
+tres veces el proyecto apareció como `INACTIVE` y **el inventario del sitio en vivo dejó de cargar** (mostraba
 el mensaje de error a los visitantes). No se pierde nada — los datos siguen ahí y
 vuelven al reactivarlo — pero mientras está pausado, cualquiera que entre a la web ve
 un error en lugar de los autos.
@@ -159,19 +181,41 @@ Dos veces por semana y no una porque el margen de 7 días es demasiado justo: si
 único aviso semanal falla una vez, la base se cae igual. Con lunes y jueves nunca
 pasan más de 4 días entre toques.
 
+#### ⚠️ Estuvo un mes sin funcionar, y por qué
+
+La base se pausó igual el 6 de noviembre, con la tarea corriendo desde el 6 de octubre.
+La causa estaba en cómo la escribí: **las sesiones que dispara una Routine arrancan sin
+el repositorio** (se ve en sus etiquetas, `config:no-git-repo`), y el texto de la tarea
+les mandaba sacar la llave de `dist/index.html`. Sin repositorio no hay llave, sin
+llave no hay petición válida, y el ping nunca llegó a hacerse. Un mes de ejecuciones
+que terminaban "bien" sin tocar la base.
+
+Arreglado el 6 de noviembre: **la llave publicable va escrita dentro de la propia
+tarea**, que ya no depende de ningún archivo. Se puede hacer porque es la llave
+publicable — la misma que está en el HTML a la vista de cualquiera — y lo que protege
+los datos es el row-level security, no el secreto de esa llave.
+
+La lección, por si vuelve a montarse algo así: **una tarea programada no hereda lo que
+tiene la sesión donde se creó.** Ni el repositorio, ni los conectores. Todo lo que
+necesite tiene que estar en su propio texto, y hay que probarla disparándola a mano y
+mirando lo que de verdad hizo, no solo que diga `SUCCEEDED`.
+
 **Lo que esa tarea NO puede hacer:** reactivar la base si ya se cayó. Las sesiones que
 dispara no llevan las herramientas de Supabase, solo `curl`. Si encuentra el API caído
 **manda un aviso al teléfono** y hay que entrar al panel a pulsar *Restore project* a
 mano. Si algún día se quiere que lo haga sola, hay que añadirle el conector de Supabase
 desde la pantalla de Routines en claude.ai.
 
-Cuando todo está bien la tarea no avisa nada. El silencio es la señal buena.
+Cuando todo está bien la tarea no avisa nada. El silencio es la señal buena — pero
+`SUCCEEDED` en el historial **no** quiere decir que el ping se hiciera; eso fue
+justamente lo que escondió el fallo durante un mes.
 
 ### Esto sigue siendo un parche
 
-La tarea programada evita el síntoma, no la causa. El arreglo de verdad es **pasar al
-plan de pago de Supabase**, que no pausa: son ~US$25/mes contra el cliente entrando a
-su propia web y encontrándola rota.
+La tarea programada evita el síntoma, no la causa, y ya falló un mes entero sin que se
+notara. El arreglo de verdad es **pasar al plan de pago de Supabase**, que no pausa:
+son ~US$25/mes contra el cliente entrando a su propia web y encontrándola rota. Van
+tres caídas en dos meses.
 
 ### ⚠️ Falta configurar el envío de correos antes de abrir el registro al público
 
@@ -187,7 +231,7 @@ Para abrirlo al público hay que conectar un SMTP propio en
 volumen (Brevo, Resend, Mailgun). Es una configuración de una sola vez, ~15 minutos.
 
 También conviene revisar en **Authentication → URL Configuration** que el *Site URL*
-apunte a https://total-trading-limited.netlify.app, porque de ahí salen los enlaces
+apunte a https://total-trading-limited.pages.dev, porque de ahí salen los enlaces
 de confirmación y de recuperación de contraseña.
 
 ### Seguridad
@@ -216,7 +260,7 @@ Lo que realmente protege los datos es el row-level security de las tablas:
 3. **Pago en línea** — bloqueado hasta decidir con el cliente qué procesador va a usar
    en Jamaica (WiPay, First Atlantic Commerce, Stripe, PayPal Business…). Sin cuenta de
    comercio no hay nada real que conectar. Cuando exista, el cobro debe autorizarse en
-   un servidor (Netlify Functions), nunca desde el navegador.
+   un servidor (una Cloudflare Function), nunca desde el navegador.
 
 ## Pendiente antes de salir a producción
 
@@ -231,11 +275,9 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
 - [ ] **Pasarela de pago** — hace falta cuenta de comercio (First Atlantic Commerce
       o WiPay) y un servidor que autorice cada cobro. La página **no pide datos de
       tarjeta en ningún punto**, y así debe seguir hasta que exista ese servidor.
-- [x] **Formulario de solicitud** — conectado a Netlify Forms; llega al correo configurado
-      en el panel de Netlify (Site settings → Forms → Form notifications) y también queda
-      guardado ahí bajo la pestaña "Forms". El aviso incluye un campo `budget_currency`
-      con la moneda que el visitante tenía en pantalla al escribir el presupuesto, para
-      que "5,000,000" no se lea como dólares por error
+- [x] **Formulario de solicitud** — **abre WhatsApp** (+1 876 404 3325) con el pedido ya
+      escrito, en el idioma que tenga puesto el visitante. No manda nada solo: el cliente
+      ve el mensaje y lo envía él. Antes usaba Netlify Forms, que no existe en Cloudflare
 - [ ] **Tasa de cambio** — fija en 161 JMD/USD, etiquetada como indicativa. En producción
       debería venir de un servicio de tasas. Se cambia en la constante `USD_TO_JMD`
       dentro de `dist/index.html`.
@@ -246,7 +288,7 @@ sitios, y esos avisos deben quitarse solo cuando lo de abajo esté resuelto:
 - [x] **Autos reales en el inventario** — los ficticios se borraron. Hoy hay un auto
       real (Toyota Hilux 2023). Los huecos de la fila se completan solos con casillas
       "SOON" hasta que entre más stock.
-- [x] **Foto del Hilux** — publicada en `dist/cars/`, servida por Netlify. El dueño
+- [x] **Foto del Hilux** — publicada en `dist/cars/`, servida por Cloudflare. El dueño
       autorizó el uso de estas imágenes; conviene tener esa autorización por escrito
       **de la casa de subasta (USS/NAA)**, que es quien retiene el copyright según sus
       propios avisos — no del dueño del vehículo, que no posee las fotos que otro tomó.
